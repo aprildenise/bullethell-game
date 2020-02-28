@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 moveVelocity;
     public Shooter shooter;
     public float attackPower;
+    public static bool isMoving;
 
     private int heathPoints;
 
@@ -49,6 +50,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
         crawlSpeed = moveSpeed / 2;
+
+        if (shooter == null)
+        {
+            Debug.LogWarning("PlayerController does not have a shooter component.", this);
+        }
+
+        isMoving = false;
     }
 
     /// <summary>
@@ -58,7 +66,17 @@ public class PlayerController : MonoBehaviour
     {
 
         // Get axis input for movement.
-        Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        //Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        if (moveInput != Vector3.zero)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            isMoving = false;
+        }
+
         if (Input.GetKey(KeyCode.LeftShift)) // If player is hitting leftShift, calculate movement with crawlSpeed.
         {
             moveVelocity = moveInput.normalized * crawlSpeed;
@@ -79,13 +97,16 @@ public class PlayerController : MonoBehaviour
         rigidBody.MovePosition(rigidBody.position + moveVelocity * Time.fixedDeltaTime);
 
         // Get button input for firing.
-        if (Input.GetKey(KeyCode.X))
+        if (shooter != null)
         {
-            shooter.shooterOn = true;
-        }
-        else
-        {
-            shooter.shooterOn = false;
+            if (Input.GetKey(KeyCode.X))
+            {
+                shooter.shooterOn = true;
+            }
+            else
+            {
+                shooter.shooterOn = false;
+            }
         }
     }
 

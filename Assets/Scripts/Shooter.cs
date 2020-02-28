@@ -55,6 +55,11 @@ public class Shooter : MonoBehaviour
 
     #endregion
 
+    public class Bullet
+    {
+
+    }
+
     private void Start()
     {
         // Logic checks
@@ -106,7 +111,7 @@ public class Shooter : MonoBehaviour
         else
         {
             // Convert the aim field to a more appropriate unit for calculations, Vector3.
-            defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), Mathf.Sin(aim * Mathf.Deg2Rad), 0);
+            defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), 0, Mathf.Sin(aim * Mathf.Deg2Rad));
         }
 
         // Begin shooting on spawn.
@@ -189,7 +194,7 @@ public class Shooter : MonoBehaviour
         if (constantRotation)
         {
             aim += spinAngle;
-            defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), Mathf.Sin(aim * Mathf.Deg2Rad), 0);
+            defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), 0, Mathf.Sin(aim * Mathf.Deg2Rad));
         }
     }
 
@@ -200,7 +205,7 @@ public class Shooter : MonoBehaviour
     public void SetAim(float newAim)
     {
         aim = newAim;
-        defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), Mathf.Sin(aim * Mathf.Deg2Rad), 0);
+        defaultAim = new Vector3(Mathf.Cos(aim * Mathf.Deg2Rad), 0, Mathf.Sin(aim * Mathf.Deg2Rad));
     }
 
 
@@ -247,7 +252,7 @@ public class Shooter : MonoBehaviour
                 for (int i = 0; i < arrays; i++)
                 {
                     float newAim = startDegree + (spread * i);
-                    Vector3 newAimVector = new Vector3(Mathf.Cos(newAim * Mathf.Deg2Rad), Mathf.Sin(newAim * Mathf.Deg2Rad), 0);
+                    Vector3 newAimVector = new Vector3(Mathf.Cos(newAim * Mathf.Deg2Rad), 0, Mathf.Sin(newAim * Mathf.Deg2Rad));
                     Shoot(newAimVector);
                 }
             }
@@ -284,7 +289,7 @@ public class Shooter : MonoBehaviour
                     for (int j = 0; j < arrays; j++)
                     {
                         float center = startDegree + (arraySpread * j);
-                        Vector3 newAim = new Vector3(Mathf.Cos(center * Mathf.Deg2Rad), Mathf.Sin(center * Mathf.Deg2Rad), 0);
+                        Vector3 newAim = new Vector3(Mathf.Cos(center * Mathf.Deg2Rad), 0, Mathf.Sin(center * Mathf.Deg2Rad));
                         Shoot(newAim);
                     }
                 }
@@ -331,7 +336,7 @@ public class Shooter : MonoBehaviour
                 for (int i = 0; i < arrays; i++)
                 {
                     float newAim = startDegree + (spread * i);
-                    Vector3 newAimVector = new Vector3(Mathf.Cos(newAim * Mathf.Deg2Rad), Mathf.Sin(newAim * Mathf.Deg2Rad), 0);
+                    Vector3 newAimVector = new Vector3(Mathf.Cos(newAim * Mathf.Deg2Rad), 0, Mathf.Sin(newAim * Mathf.Deg2Rad));
                     Gizmos.DrawLine(transform.position, (newAimVector * speed) * 20);
                     //Shoot(newAimVector);
                 }
@@ -369,7 +374,7 @@ public class Shooter : MonoBehaviour
                     for (int j = 0; j < arrays; j++)
                     {
                         float center = startDegree + (arraySpread * j);
-                        Vector3 newAimVector = new Vector3(Mathf.Cos(center * Mathf.Deg2Rad), Mathf.Sin(center * Mathf.Deg2Rad), 0);
+                        Vector3 newAimVector = new Vector3(Mathf.Cos(center * Mathf.Deg2Rad), 0, Mathf.Sin(center * Mathf.Deg2Rad));
                         Gizmos.DrawLine(transform.position, (newAimVector * speed) * 20);
                     }
                 }
