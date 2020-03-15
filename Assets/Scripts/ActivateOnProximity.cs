@@ -7,10 +7,11 @@ public class ActivateOnProximity : MonoBehaviour
 {
 
     public GameObject target;
-    public BoxCollider collider;
+    public BoxCollider triggerCollider;
+    public GameObject parent;
+    public IActivator activator;
     [SerializeField]
-    public float timeUntilTrigger;
-    private IActivator activator;
+    private float timeUntilTrigger;
 
     [Header("Debug and test only")]
     public bool refresh;
@@ -18,38 +19,18 @@ public class ActivateOnProximity : MonoBehaviour
 
     private void Start()
     {
-        try
-        {
-            collider = GetComponent<BoxCollider>();
-        } catch (System.NullReferenceException)
-        {
-            collider = gameObject.AddComponent<BoxCollider>();
-
-        }
-
         activator = transform.parent.gameObject.GetComponent<IActivator>();
-
-
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-
-        if (other.gameObject.Equals(target))
-        {
-            activator.activate();
-        }
-
+        parent = transform.parent.gameObject;
     }
 
     private void CalculateTriggerTime()
     {
         // Calculate the position of this activator and the target based on the max bounds of their colliders
-        Vector3 parentPosition = collider.bounds.min;
+        Vector3 parentPosition = triggerCollider.bounds.min;
         Vector3 targetPosition = target.GetComponent<BoxCollider>().bounds.max;
 
-        Debug.Log(parentPosition);
-        Debug.Log(targetPosition);
+        //Debug.Log(parentPosition);
+        //Debug.Log(targetPosition);
 
         // Set the y and x to 0 so that the distance is calculated 1-dimentionally.
         parentPosition.x = 0;
@@ -61,7 +42,7 @@ public class ActivateOnProximity : MonoBehaviour
 
         // Calculate time
         float distance = Vector3.Distance(parentPosition, targetPosition);
-        Debug.Log("distance:" + distance);
+        //Debug.Log("distance:" + distance);
         timeUntilTrigger = distance / (PlayerBoundary.speed);
 
     }
@@ -76,6 +57,15 @@ public class ActivateOnProximity : MonoBehaviour
         string s = "Time until trigger:" + timeUntilTrigger;
         Handles.color = Color.black;
         Handles.Label(transform.position, s);
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Called:" + other.gameObject.name);
+        if (other.gameObject.Equals(target))
+        {
+            activator.activate();
+        }
     }
 
 

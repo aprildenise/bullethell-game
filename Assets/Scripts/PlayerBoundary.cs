@@ -24,7 +24,7 @@ public class PlayerBoundary : MonoBehaviour
     {
         rb.MovePosition(rb.position + moveVelocity * Time.deltaTime);
         speed = rb.velocity.magnitude;
-        Debug.Log(speed);
+        //Debug.Log(speed);
     }
 
 
