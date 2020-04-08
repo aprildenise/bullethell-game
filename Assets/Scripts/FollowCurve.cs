@@ -59,21 +59,17 @@ public class FollowCurve : MonoBehaviour
     /// Make the agent start following a curve.
     /// </summary>
     /// <param name="follow">True if the agent should start following, false elsewise.</param>
-    public void follow(bool follow)
+    public void Follow(bool follow)
     {
         followingCurve = follow;
     }
 
-    public void followCurve(bool follow, float followSpeed)
-    {
-        
-    }
 
     /// <summary>
     /// Check if this agent has finished following all its curves.
     /// </summary>
     /// <returns>True if it has, else if it still has more curves.</returns>
-    public bool isFinished()
+    public bool IsFinished()
     {
         return (nextCurve > curves.Length - 1);
     }

@@ -10,3 +10,12 @@ a bullet hell game for the #100daysofgamedev challenge
 * Added FollowCurve to the Enemy.
 * Added functionality to the FollowCurve and Enemy so that the Enemy can follow a curve and activate its Shooter once it has finished following a curve.
 * Began documentation with FollowCurve.
+
+04/02 - Day 13, 1 hour
+* Fixing logic error where Enemy shoots all bullets once it finishes the end of its Follow Curve.
+
+04/07 - Day 14, 2 hours
+* Have to fixed above logic yet.
+* Cleaning up Enemy and Shooter by creating a more robust hierarchy, which starts with the Obstacle and Shooter abstract classes.
+* Implemented Obstacle, Enemy, Shooting Enemy. Testing needed.
+* Began implementing Shooter abstract class.

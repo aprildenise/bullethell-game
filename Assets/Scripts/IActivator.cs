@@ -2,5 +2,5 @@
 
 public interface IActivator
 {
-    void activate();
+    void Activate();
 }

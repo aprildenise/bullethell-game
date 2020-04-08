@@ -321,7 +321,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 601900648}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.2, y: 0, z: 10.999998}
+  m_LocalPosition: {x: -24.2, y: 0, z: 11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1563631462}
@@ -531,6 +531,7 @@ GameObject:
   - component: {fileID: 984947222}
   - component: {fileID: 984947221}
   - component: {fileID: 984947226}
+  - component: {fileID: 984947227}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -622,7 +623,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 2074352667}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -638,9 +640,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0e9da0241dcab4195f0ce035190545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  shooter: {fileID: 0}
-  attackPower: 0
+  moveSpeed: 10
+  shooter: {fileID: 2074352668}
+  attackPower: 2
+--- !u!114 &984947227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984947220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d19d24d17dae194ca1b6c9118624190, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1113990890
 GameObject:
   m_ObjectHideFlags: 0
@@ -818,7 +832,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1117284559}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -24.2, y: 0, z: 10.41}
+  m_LocalPosition: {x: -24.2, y: 0, z: 19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1452086164}
@@ -1043,31 +1057,29 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1563631461}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f58c31070f7a054b8df895903c8c510, type: 3}
+  m_Script: {fileID: 11500000, guid: 26d45a033f83c88499f1b9ecfaf112ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 9169452061657613119, guid: b959e22d262dc964eb9ebdfc7b8ebeac, type: 3}
-  speed: 5
-  aim: 259
+  speed: 10
+  aim: 255
+  shotDelay: 2
+  homing: 0
+  equalArraySpread: 1
+  arrays: 5
+  arraySpread: 0
+  arrayGroups: 0
+  arrayGroupSpread: 0
   startDelay: 0
-  shotDelay: 1
-  shootAtPlayer: 0
   continuousFire: 1
-  shotsInRound: 0
+  shotsInRound: 5
   roundDelay: 0
   requiredShots: 0
   requiredRounds: 0
   constantRotation: 0
   spinAngle: 0
-  equalArraySpread: 0
-  arrays: 5
-  arraySpread: 50
-  arrayGroups: 2
-  arrayGroupSpread: 10
-  shooterOn: 0
-  playerShooter: 0
 --- !u!1 &1749308237
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,3 +1140,57 @@ Transform:
   m_Father: {fileID: 1113990894}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2074352666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2074352667}
+  - component: {fileID: 2074352668}
+  m_Layer: 0
+  m_Name: Shooter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2074352667
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074352666}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 984947225}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2074352668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074352666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b936089f3954845b02ff647c308d9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
+  speed: 20
+  aim: 90
+  shotDelay: 0
+  homing: 0
+  equalArraySpread: 0
+  arrays: 3
+  arraySpread: 35
+  arrayGroups: 1
+  arrayGroupSpread: 48
+  player: {fileID: 984947227}

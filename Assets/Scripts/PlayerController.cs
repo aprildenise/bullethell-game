@@ -7,14 +7,18 @@ public class PlayerController : MonoBehaviour
 
     #region Fields
 
+    private Player thisPlayer;
     private Rigidbody rigidBody;
+
     /// <summary>
     /// Given multiplier to determine how fast the object will move.
     /// </summary>
     public float moveSpeed;
+
     /// <summary>
     /// Given multiplier to make the object move slower than the moveSpeed.
     /// </summary>
+    /// 
     private float crawlSpeed;
     /// <summary>
     /// Force applied to object to make it move.
@@ -101,11 +105,11 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.X))
             {
-                shooter.shooterOn = true;
+                shooter.StartShooting();
             }
             else
             {
-                shooter.shooterOn = false;
+                shooter.StopShooting();
             }
         }
     }
