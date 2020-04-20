@@ -47,7 +47,7 @@ public class TestEnemy : MonoBehaviour {
         // Have this enemy shoot once it has finished its curve.
         if (followCurve)
         {
-            if (followCurve.isFinished())
+            if (followCurve.IsFinished())
             {
                 if (shooter != null)
                 {
@@ -89,7 +89,7 @@ public class TestEnemy : MonoBehaviour {
     {
         if (followCurve != false)
         {
-            followCurve.follow(follow);
+            followCurve.Follow(follow);
         }
     }
 

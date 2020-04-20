@@ -19,3 +19,8 @@ a bullet hell game for the #100daysofgamedev challenge
 * Cleaning up Enemy and Shooter by creating a more robust hierarchy, which starts with the Obstacle and Shooter abstract classes.
 * Implemented Obstacle, Enemy, Shooting Enemy. Testing needed.
 * Began implementing Shooter abstract class.
+
+04/19 - Day 15, 3 hours
+* Fixed the above bug.
+* Continued documentation.
+* Continued the hiearchy further. Now completed!

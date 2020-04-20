@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     /// Force applied to object to make it move.
     /// </summary>
     private Vector3 moveVelocity;
-    public Shooter shooter;
+    public ManualShooter shooter;
     public float attackPower;
     public static bool isMoving;
 
@@ -105,11 +105,11 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.X))
             {
-                shooter.StartShooting();
+                shooter.AllowShooting(true);
             }
             else
             {
-                shooter.StopShooting();
+                shooter.AllowShooting(false);
             }
         }
     }
