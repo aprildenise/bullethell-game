@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDestructable
 {
 
     #region Fields
@@ -115,18 +115,22 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Enemy Bullet")
-        {
-            LoseLife();
-            Destroy(other.gameObject);
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.gameObject.tag == "Enemy Bullet")
+    //    {
+    //        LoseLife();
+    //        Destroy(other.gameObject);
+    //    }
+    //}
 
     private void LoseLife()
     {
         Debug.Log("Player lost a life.");
     }
 
+    public void Damage(float damageReceived)
+    {
+        LoseLife();
+    }
 }

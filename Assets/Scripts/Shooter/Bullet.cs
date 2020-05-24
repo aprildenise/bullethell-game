@@ -5,6 +5,13 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
+    /// <summary>
+    /// BulletInfo that alreadu holds the fields that this Bullet object should have.
+    /// </summary>
+    [SerializeField]
+    private BulletInfo bulletInfo;
+
+    // From bulletInfo. fields are public for now
     [Header("Homing")]
     public float homingRate;
 
@@ -21,36 +28,45 @@ public class Bullet : MonoBehaviour
     public float timeInDecceleration;
 
     // For class computations
+    private Transform target;
+    private Rigidbody rigidBody;
     private float velocity;
     private float acceleration;
     private float deceleration;
-    private Transform target;
-    private Rigidbody rigidBody;
     private float timer = 0;
 
-    private void Start()
+    private Vector3 origin;
+
+    protected void Start()
     {
-        GameObject parent = transform.parent.gameObject;
-        if (parent.tag == "Enemy Shooter")
+
+        if (bulletInfo != null)
         {
-            if (PlayerController.instance == null)
-            {
-                Debug.LogWarning("PlayerController can not be found by this bullet", this.gameObject);
-                target = null;
-            }
-            else
-            {
-                target = PlayerController.instance.transform;
-            }
+            this.homingRate = bulletInfo.homingRate;
+            this.accelerating = bulletInfo.accelerating;
+            this.decelerating = bulletInfo.decelerating;
+            this.timeToMax = bulletInfo.timeToMax;
+            this.timeToMin = bulletInfo.timeToMin;
+            this.maxSpeed = bulletInfo.maxSpeed;
+            this.minSpeed = bulletInfo.minSpeed;
+            this.deaccelerating = bulletInfo.deaccelerating;
+            this.timeInDecceleration = bulletInfo.timeInDecceleration;
         }
+
+        // CHANGE THIS
+        GameObject parent = transform.parent.gameObject;
         Shooter shooter = parent.GetComponent<Shooter>();
+
+
         velocity = shooter.speed;
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
-        deceleration = -1 * (maxSpeed / timeToMin); 
+        deceleration = -1 * (maxSpeed / timeToMin);
+
+        origin = this.transform.position;
     }
 
-    private void Update()
+    protected void Update()
     {
         if (deaccelerating)
         {
@@ -81,7 +97,7 @@ public class Bullet : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    protected void FixedUpdate()
     {
         // If this bullet has a homingRate, then it will home and move towards the player.
         if (homingRate > 0)
@@ -101,6 +117,37 @@ public class Bullet : MonoBehaviour
         // Continue moving the bullet (if needed)
         rigidBody.velocity = transform.forward * velocity;
     }
+
+    /// <summary>
+    /// If this bullet collides into another object that has the IDestructable interface,
+    /// damage the object by calling Damage().
+    /// </summary>
+    /// <param name="other">Collider of the object this encountered.</param>
+    protected void OnTriggerEnter(Collider other)
+    {
+        try
+        {
+            IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
+            float damage = CalculateDamage(other.gameObject);
+            destructable.Damage(damage);
+        } catch(System.NullReferenceException e)
+        {
+            Debug.LogError(e);
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Calculate the damage this bullet will inflict onto a Destructable, based on
+    /// the distance from the target and this bullet's shooter.
+    /// </summary>
+    /// <returns>Damage calculated</returns>
+    protected virtual float CalculateDamage(GameObject target)
+    {
+        float distance = Vector3.Distance(target.transform.position, origin);
+        return distance;
+    }
+
 
 
 }
