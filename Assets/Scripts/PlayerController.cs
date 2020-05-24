@@ -115,22 +115,28 @@ public class PlayerController : MonoBehaviour, IDestructable
     }
 
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.gameObject.tag == "Enemy Bullet")
-    //    {
-    //        LoseLife();
-    //        Destroy(other.gameObject);
-    //    }
-    //}
-
     private void LoseLife()
     {
         Debug.Log("Player lost a life.");
     }
 
-    public void Damage(float damageReceived)
+    public void ReceiveDamage(float damageReceived)
     {
         LoseLife();
+    }
+
+    public void OnZeroHealth()
+    {
+        // game over
+    }
+
+    public bool HasHealth()
+    {
+        return true;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        
     }
 }

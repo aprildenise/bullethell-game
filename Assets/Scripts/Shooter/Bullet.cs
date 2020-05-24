@@ -129,7 +129,7 @@ public class Bullet : MonoBehaviour
         {
             IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
             float damage = CalculateDamage(other.gameObject);
-            destructable.Damage(damage);
+            destructable.ReceiveDamage(damage);
         } catch(System.NullReferenceException e)
         {
             Debug.LogError(e);
