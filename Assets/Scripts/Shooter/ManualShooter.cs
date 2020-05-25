@@ -19,7 +19,7 @@ public class ManualShooter : Shooter
         base.SetAim(90f);
         this.enabled = true;
         timer = gameObject.AddComponent<Timer>();
-        timer.SetTimer(shotDelay);
+        timer.SetTimer(shotDelay, Timer.Status.FINISHED);
     }
 
     /// <summary>
@@ -36,9 +36,10 @@ public class ManualShooter : Shooter
     /// </summary>
     private void FixedUpdate()
     {
+        //Debug.Log("is shooting:" + isShooting);
+        //Debug.Log("timer:" + timer.GetStatus());
         if (isShooting && timer.GetStatus() == Timer.Status.FINISHED)
         {
-            //Debug.Log("going");
             Shoot();
             timer.StartTimer();
         }

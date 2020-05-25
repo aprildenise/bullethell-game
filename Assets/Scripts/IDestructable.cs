@@ -11,6 +11,7 @@ public interface IDestructable {
     void ReceiveDamage(float damageReceived);
     void OnZeroHealth();
     bool HasHealth();
+    void OnTriggerEnter(Collider other);
 
 
 }

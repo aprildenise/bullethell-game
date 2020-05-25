@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 
-public abstract class Shooter : MonoBehaviour
+public abstract class Shooter : MonoBehaviour, ITypeSize
 {
 
-    #region Fields
+    #region Variables
 
-    // Bullet options
+    // Attributes for the bullets in the shooter
+    [SerializeField] BulletInfo bulletInfo;
+
+    // Attributes of this shooter
+    [SerializeField]
+    private ShooterInfo shooterInfo;
     public GameObject prefab;
     public float speed;
     [Range(0, 360)]
     public float aimDegree;
     public float shotDelay;
     public bool homing;
-
     [Header("Shoot in arrays and groups")]
     public bool equalArraySpread;
     public int arrays;
@@ -27,6 +31,10 @@ public abstract class Shooter : MonoBehaviour
     protected bool isShooting;
     protected bool inDelay;
     protected int shots;
+
+    // Type and size of this weapon
+    protected Type type;
+    protected Size size;
     #endregion
 
 
@@ -43,6 +51,21 @@ public abstract class Shooter : MonoBehaviour
     /// </summary>
     private void Start()
     {
+
+        if (shooterInfo != null)
+        {
+            prefab = shooterInfo.prefab;
+            speed = shooterInfo.speed;
+            aimDegree = shooterInfo.aimDegree;
+            shotDelay = shooterInfo.shotDelay;
+            homing = shooterInfo.homing;
+            equalArraySpread = shooterInfo.equalArraySpread;
+            arrays = shooterInfo.arrays;
+            arraySpread = shooterInfo.arraySpread;
+            arrayGroups = shooterInfo.arrayGroups;
+            arrayGroupSpread = shooterInfo.arrayGroupSpread;
+        }
+
         // Logic checks
         if (equalArraySpread)
         {
@@ -168,8 +191,16 @@ public abstract class Shooter : MonoBehaviour
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aimDegree)
     {
-        Debug.Log(aimDegree);
+        //Debug.Log(aimDegree);
         GameObject bullet = Instantiate(prefab, transform.position, Quaternion.identity, gameObject.transform);
+        try
+        {
+            Bullet b = bullet.GetComponent<Bullet>();
+            b.SetBullet(bulletInfo, type, size, this.gameObject.name);
+        } catch (System.NullReferenceException e)
+        {
+            throw new System.ArgumentNullException("Bullet Component");
+        }
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
         rigidBody.AddForce(aimDegree * speed, ForceMode.Impulse);
         rigidBody.MoveRotation(Quaternion.LookRotation(aimDegree));
@@ -257,9 +288,42 @@ public abstract class Shooter : MonoBehaviour
         }
     }
 
+    #region TypeSize
 
+    Type ITypeSize.GetType()
+    {
+        return this.type;
+    }
 
+    public Size GetSize()
+    {
+        return this.size;
+    }
 
+    public void SetType(Type type)
+    {
+        this.type = type;
+    }
 
+    public void SetSize(Size size)
+    {
+        this.size = size;
+    }
 
+    public void OnAdvantage(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnDisadvantage(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnNeutral(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    #endregion
 }
