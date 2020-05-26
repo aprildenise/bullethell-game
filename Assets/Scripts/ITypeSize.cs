@@ -5,7 +5,7 @@ using UnityEngine;
 public interface ITypeSize
 {
 
-    Type GetType();
+    Type GetGameType();
     Size GetSize();
     void SetType(Type type);
     void SetSize(Size size);

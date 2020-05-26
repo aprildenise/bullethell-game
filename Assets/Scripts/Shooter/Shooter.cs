@@ -33,8 +33,8 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     protected int shots;
 
     // Type and size of this weapon
-    protected Type type;
-    protected Size size;
+    public Type type;
+    public Size size;
     #endregion
 
 
@@ -64,6 +64,8 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
             arraySpread = shooterInfo.arraySpread;
             arrayGroups = shooterInfo.arrayGroups;
             arrayGroupSpread = shooterInfo.arrayGroupSpread;
+            type = shooterInfo.type;
+            size = shooterInfo.size;
         }
 
         // Logic checks
@@ -191,31 +193,21 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aimDegree)
     {
-        //Debug.Log(aimDegree);
         GameObject bullet = Instantiate(prefab, transform.position, Quaternion.identity, gameObject.transform);
-        try
-        {
-            Bullet b = bullet.GetComponent<Bullet>();
-            b.SetBullet(bulletInfo, type, size, this.gameObject.name);
-        } catch (System.NullReferenceException e)
-        {
-            throw new System.ArgumentNullException("Bullet Component");
-        }
+        Bullet b = bullet.GetComponent<Bullet>();
+
+        // If this Shooter has a Bullet Info, add that info to the new Bullet object.
+        // Else, just set the type and the size.
+        if (bulletInfo != null) b.SetBullet(bulletInfo, type, size, this.gameObject.name);
+        else b.SetBullet(type, size, this.gameObject.name);
+
+        // Fire the bullet
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
         rigidBody.AddForce(aimDegree * speed, ForceMode.Impulse);
         rigidBody.MoveRotation(Quaternion.LookRotation(aimDegree));
         shots++;
     }
 
-    //public void SetIsShooting(bool isShooting)
-    //{
-    //    this.isShooting = isShooting;
-    //}
-
-    //public bool GetIsShooting()
-    //{
-    //    return isShooting;
-    //}
 
     /// <summary>
     /// For testing only. Uses the code from CalculateShot() in order to draw lines showing where the 
@@ -290,7 +282,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     #region TypeSize
 
-    Type ITypeSize.GetType()
+    public Type GetGameType()
     {
         return this.type;
     }
@@ -302,12 +294,12 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     public void SetType(Type type)
     {
-        this.type = type;
+        throw new System.NotImplementedException();
     }
 
     public void SetSize(Size size)
     {
-        this.size = size;
+        throw new System.NotImplementedException();
     }
 
     public void OnAdvantage(GameObject collider, GameObject other)

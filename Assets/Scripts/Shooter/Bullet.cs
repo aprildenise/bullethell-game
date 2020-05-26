@@ -58,6 +58,11 @@ public class Bullet : MonoBehaviour, ITypeSize
             this.timeInDecceleration = bulletInfo.timeInDecceleration;
         }
 
+        SetBullet(type, size, shooterName);
+    }
+
+    public void SetBullet(Type type, Size size, string shooterName)
+    {
         this.type = type;
         this.size = size;
         this.shooterName = shooterName;
@@ -178,7 +183,7 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     #region TypeSize
 
-    Type ITypeSize.GetType()
+    public Type GetGameType()
     {
         return this.type;
     }

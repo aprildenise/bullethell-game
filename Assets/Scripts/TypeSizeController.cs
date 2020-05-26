@@ -33,8 +33,8 @@ public class TypeSizeController
 
     private static Matchup CheckMatchup(ITypeSize incoming, ITypeSize receiving)
     {
-        Type type1 = incoming.GetType();
-        Type type2 = receiving.GetType();
+        Type type1 = incoming.GetGameType();
+        Type type2 = receiving.GetGameType();
         if (type1 == Type.NONE || type2 == Type.NONE)
         {
             return Matchup.NEUTRAL;
@@ -63,6 +63,17 @@ public class TypeSizeController
         }
     }
 
+
+    public static bool Equals(Type type1, Type type2)
+    {
+        return type1 == type2;
+    }
+
+    public static bool Equals(Size size1, Size size2)
+    {
+        return size1 == size2;
+    }
+
     private enum Matchup
     {
         ADVANTAGE,
@@ -75,16 +86,16 @@ public class TypeSizeController
 
 public enum Size
 {
-    LIGHT,
-    MEDIUM,
-    HEAVY,
-    NONE
+    LIGHT = 0,
+    MEDIUM = 1,
+    HEAVY = 2,
+    NONE = 3
 }
 
 public enum Type
 {
-    LIGHT,
-    MECHANICA,
-    DARK,
-    NONE
+    LIGHT = 0,
+    MECHANICA = 1,
+    DARK = 2,
+    NONE = 3
 }

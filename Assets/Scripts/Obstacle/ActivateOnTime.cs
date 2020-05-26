@@ -43,7 +43,9 @@ public class ActivateOnTime : ActivateOn
             float colliderSizes = Mathf.Abs(triggerCollider.size.z / 2) + Mathf.Abs(target.GetComponent<BoxCollider>().size.z / 2);
 
             // Calculate the new distance.
-            float distance = (PlayerBoundary.speed * timeToActivate) + colliderSizes;
+            // TODO fix this so that the object does not have to be based on the player boundery
+            //float distance = (PlayerBoundary.speed * timeToActivate) + colliderSizes;
+            float distance = 0; // placeholder for compiler
             Transform parent = base.toActivate.transform;
             Vector3 newPosition = new Vector3(parent.position.x, parent.position.y, distance);
             parent.position = newPosition;

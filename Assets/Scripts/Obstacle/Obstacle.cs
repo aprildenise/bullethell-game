@@ -49,7 +49,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     #region TypeSize
 
-    Type ITypeSize.GetType()
+    public Type GetGameType()
     {
         return this.type;
     }

@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDestructable
@@ -7,8 +7,11 @@ public class PlayerController : MonoBehaviour, IDestructable
 
     #region Variables
 
+    // Other components for the Player object
     private Player thisPlayer;
     private Rigidbody rigidBody;
+    public ManualShooter currentShooter;
+    public ManualShooter[] availableShooters;
     private WeaponPanel weaponPanel;
 
     /// <summary>
@@ -25,10 +28,10 @@ public class PlayerController : MonoBehaviour, IDestructable
     /// Force applied to object to make it move.
     /// </summary>
     private Vector3 moveVelocity;
-    public ManualShooter shooter;
+    
     public float attackPower;
     public static bool isMoving;
-
+    private bool openedWeaponPanel;
     private int heathPoints;
 
     #endregion
@@ -65,12 +68,13 @@ public class PlayerController : MonoBehaviour, IDestructable
         }
         crawlSpeed = moveSpeed / 2;
 
-        if (shooter == null)
+        if (currentShooter == null)
         {
             Debug.LogWarning("PlayerController does not have a shooter component.", this);
         }
 
         isMoving = false;
+        openedWeaponPanel = false;
     }
 
     /// <summary>
@@ -102,13 +106,18 @@ public class PlayerController : MonoBehaviour, IDestructable
         }
 
         // If the player is hitting space, show the weapon panel.
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            weaponPanel.ActivateWeaponPanel();
-        }
-        else
-        {
-            weaponPanel.DeactivateWeaponPanel();
+            if (openedWeaponPanel)
+            {
+                weaponPanel.DeactivateWeaponPanel();
+                openedWeaponPanel = false;
+            }
+            else
+            {
+                openedWeaponPanel = true;
+                weaponPanel.ActivateWeaponPanel();
+            }
         }
 
     }
@@ -122,15 +131,15 @@ public class PlayerController : MonoBehaviour, IDestructable
         rigidBody.MovePosition(rigidBody.position + moveVelocity * Time.fixedDeltaTime);
 
         // Get button input for firing.
-        if (shooter != null)
+        if (currentShooter != null)
         {
             if (Input.GetKey(KeyCode.X))
             {
-                shooter.AllowShooting(true);
+                currentShooter.AllowShooting(true);
             }
             else
             {
-                shooter.AllowShooting(false);
+                currentShooter.AllowShooting(false);
             }
         }
     }
@@ -139,6 +148,30 @@ public class PlayerController : MonoBehaviour, IDestructable
     private void LoseLife()
     {
         Debug.Log("Player lost a life.");
+    }
+
+    /// <summary>
+    /// Set the Player's current Shooter based on the given Tyoe and Size.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="size"></param>
+    public void SetCurrentShooter(Type type, Size size)
+    {
+        // Find the shooter in the available shooters.
+        foreach (ManualShooter s in availableShooters)
+        {
+            Debug.Log("s:" + s.GetGameType() + s.GetSize());
+            if (TypeSizeController.Equals(s.GetGameType(), type) && TypeSizeController.Equals(s.GetSize(), size))
+            {
+                //TODO See if it's appropriate to simply deactivate
+                // Turn off current shooter and set the new one.
+                currentShooter.gameObject.SetActive(false);
+                currentShooter = s;
+                currentShooter.gameObject.SetActive(true);
+                return;
+            }
+        }
+        
     }
 
     #region Destructible

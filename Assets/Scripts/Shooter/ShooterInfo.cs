@@ -21,4 +21,7 @@ public class ShooterInfo : ScriptableObject
     [Range(0, 360)]
     public float arrayGroupSpread;
 
+    public Type type;
+    public Size size;
+
 }
