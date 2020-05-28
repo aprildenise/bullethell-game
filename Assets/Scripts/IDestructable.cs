@@ -8,7 +8,10 @@ using UnityEngine;
 public interface IDestructable {
 
 
-    void Damage(float damageReceived);
+    void ReceiveDamage(float damageReceived);
+    void OnZeroHealth();
+    bool HasHealth();
+    void OnTriggerEnter(Collider other);
 
 
 }

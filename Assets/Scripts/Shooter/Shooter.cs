@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 
-public abstract class Shooter : MonoBehaviour
+public abstract class Shooter : MonoBehaviour, ITypeSize
 {
 
-    #region Fields
+    #region Variables
 
-    // Bullet options
+    // Attributes for the bullets in the shooter
+    [SerializeField] BulletInfo bulletInfo;
+
+    // Attributes of this shooter
+    [SerializeField]
+    private ShooterInfo shooterInfo;
+    public string shooterName;
     public GameObject prefab;
     public float speed;
-    [Range(0, 360)]
     public float aimDegree;
     public float shotDelay;
     public bool homing;
-
     [Header("Shoot in arrays and groups")]
     public bool equalArraySpread;
     public int arrays;
@@ -24,11 +28,15 @@ public abstract class Shooter : MonoBehaviour
 
     // For class calculations
     protected Vector3 aimVector;
+    protected Vector3 center;
     protected bool isShooting;
     protected bool inDelay;
     protected int shots;
-    #endregion
 
+    // Type and size of this weapon
+    public Type type;
+    public Size size;
+    #endregion
 
     /// <summary>
     /// Run the Start method. Used by children of this class.
@@ -43,6 +51,12 @@ public abstract class Shooter : MonoBehaviour
     /// </summary>
     private void Start()
     {
+
+        if (shooterInfo != null)
+        {
+            SetWithShooterInfo();
+        }
+
         // Logic checks
         if (equalArraySpread)
         {
@@ -78,7 +92,6 @@ public abstract class Shooter : MonoBehaviour
         }
 
         // Setups
-        //rigidBody = GetComponent<Rigidbody>();
         this.enabled = false;
     }
 
@@ -87,10 +100,17 @@ public abstract class Shooter : MonoBehaviour
     /// Set the aim of this shooter, in degrees.
     /// </summary>
     /// <param name="newAim"></param>
-    protected void SetAim(float aimDegree)
+    public void SetAim(float aimDegree)
     {
         this.aimDegree = aimDegree;
         aimVector = new Vector3(Mathf.Cos(aimDegree * Mathf.Deg2Rad), 0, Mathf.Sin(aimDegree * Mathf.Deg2Rad));
+    }
+
+    public void SetAim(Vector3 aimVector)
+    {
+        this.aimVector = aimVector;
+        if (aimVector.x < 0) this.aimDegree = 90f + Vector3.Angle(aimVector, Vector3.forward);
+        else this.aimDegree = 90f - Vector3.Angle(aimVector, Vector3.forward);
     }
 
 
@@ -168,23 +188,21 @@ public abstract class Shooter : MonoBehaviour
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aimDegree)
     {
-        Debug.Log(aimDegree);
-        GameObject bullet = Instantiate(prefab, transform.position, Quaternion.identity, gameObject.transform);
+        GameObject bullet = Instantiate(prefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
+        Bullet b = bullet.GetComponent<Bullet>();
+
+        // If this Shooter has a Bullet Info, add that info to the new Bullet object.
+        // Else, just set the type and the size.
+        if (bulletInfo != null) b.SetBullet(bulletInfo, type, size, this.gameObject.name, speed);
+        else b.SetBullet(type, size, this.gameObject.name, speed);
+
+        // Fire the bullet
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
         rigidBody.AddForce(aimDegree * speed, ForceMode.Impulse);
         rigidBody.MoveRotation(Quaternion.LookRotation(aimDegree));
         shots++;
     }
 
-    //public void SetIsShooting(bool isShooting)
-    //{
-    //    this.isShooting = isShooting;
-    //}
-
-    //public bool GetIsShooting()
-    //{
-    //    return isShooting;
-    //}
 
     /// <summary>
     /// For testing only. Uses the code from CalculateShot() in order to draw lines showing where the 
@@ -241,6 +259,7 @@ public abstract class Shooter : MonoBehaviour
                     // Calculate the center of each array group. Spawning bullets for 
                     // each array will begin at startDegree.
                     float startDegree = arrayCenter - centerIncrement;
+                    //Debug.Log(startGroupDegree);
                     for (int j = 0; j < arrays; j++)
                     {
                         float center = startDegree + (arraySpread * j);
@@ -257,9 +276,67 @@ public abstract class Shooter : MonoBehaviour
         }
     }
 
+    private void SetWithShooterInfo()
+    {
+        shooterName = shooterInfo.shooterName;
+        prefab = shooterInfo.prefab;
+        speed = shooterInfo.speed;
+        aimDegree = shooterInfo.aimDegree;
+        shotDelay = shooterInfo.shotDelay;
+        homing = shooterInfo.homing;
+        equalArraySpread = shooterInfo.equalArraySpread;
+        arrays = shooterInfo.arrays;
+        arraySpread = shooterInfo.arraySpread;
+        arrayGroups = shooterInfo.arrayGroups;
+        arrayGroupSpread = shooterInfo.arrayGroupSpread;
+        type = shooterInfo.type;
+        size = shooterInfo.size;
+    }
 
+    #region TypeSize
 
+    public Type GetGameType()
+    {
+        return this.type;
+    }
 
+    public Size GetSize()
+    {
+        return this.size;
+    }
 
+    public void SetType(Type type)
+    {
+        throw new System.NotImplementedException();
+    }
 
+    public void SetSize(Size size)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnAdvantage(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnDisadvantage(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnNeutral(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    #endregion
+
+    private void OnValidate()
+    {
+        if (shooterInfo != null)
+        {
+            SetWithShooterInfo();
+        }
+    }
 }

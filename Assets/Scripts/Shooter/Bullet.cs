@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, ITypeSize
 {
-
-    /// <summary>
-    /// BulletInfo that alreadu holds the fields that this Bullet object should have.
-    /// </summary>
-    [SerializeField]
-    private BulletInfo bulletInfo;
+    #region Variables
 
     // From bulletInfo. fields are public for now
+
+    private BulletInfo b;
     [Header("Homing")]
+    public float baseSpeed; // Speed as given by the Shooter this came from.
     public float homingRate;
 
     [Header("Acceleration/Decceleration")]
@@ -35,11 +33,19 @@ public class Bullet : MonoBehaviour
     private float deceleration;
     private float timer = 0;
 
+    // Type and size of the weapon that shot this bullet.
+    private Type type;
+    private Size size;
+
     private Vector3 origin;
+    private string shooterName;
 
-    protected void Start()
+    #endregion
+
+    #region Bullet Operations
+
+    public void SetBullet(BulletInfo bulletInfo, Type type, Size size, string shooterName, float speed)
     {
-
         if (bulletInfo != null)
         {
             this.homingRate = bulletInfo.homingRate;
@@ -53,12 +59,23 @@ public class Bullet : MonoBehaviour
             this.timeInDecceleration = bulletInfo.timeInDecceleration;
         }
 
-        // CHANGE THIS
-        GameObject parent = transform.parent.gameObject;
-        Shooter shooter = parent.GetComponent<Shooter>();
+        SetBullet(type, size, shooterName, speed);
+    }
 
+    public void SetBullet(Type type, Size size, string shooterName, float speed)
+    {
+        this.type = type;
+        this.size = size;
+        this.shooterName = shooterName;
+        this.baseSpeed = speed;
+    }
 
-        velocity = shooter.speed;
+    /// <summary>
+    /// Set up this bullet.
+    /// </summary>
+    protected void Start()
+    {
+        velocity = baseSpeed;
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
@@ -66,6 +83,9 @@ public class Bullet : MonoBehaviour
         origin = this.transform.position;
     }
 
+    /// <summary>
+    /// Find the acceleration and deceleration of the bullet.
+    /// </summary>
     protected void Update()
     {
         if (deaccelerating)
@@ -97,6 +117,10 @@ public class Bullet : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// If homing, alter the path of this bullet.
+    /// Also, apply the acceleration and deceleration found in Update.
+    /// </summary>
     protected void FixedUpdate()
     {
         // If this bullet has a homingRate, then it will home and move towards the player.
@@ -118,24 +142,29 @@ public class Bullet : MonoBehaviour
         rigidBody.velocity = transform.forward * velocity;
     }
 
+
     /// <summary>
-    /// If this bullet collides into another object that has the IDestructable interface,
-    /// damage the object by calling Damage().
+    /// Interact with what was just collided based on Typing and Size rules.
     /// </summary>
-    /// <param name="other">Collider of the object this encountered.</param>
+    /// <param name="other"></param>
     protected void OnTriggerEnter(Collider other)
     {
+        // Make sure bullets from the same weapon aren't colliding with each other
         try
         {
-            IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
-            float damage = CalculateDamage(other.gameObject);
-            destructable.Damage(damage);
-        } catch(System.NullReferenceException e)
+            Bullet b = other.gameObject.GetComponent<Bullet>();
+            if (b.shooterName == this.shooterName)
+            {
+                return;
+            }
+        } catch (System.NullReferenceException)
         {
-            Debug.LogError(e);
-            return;
+            TypeSizeController.Interact(this.gameObject, other.gameObject);
         }
+        
     }
+
+    #endregion
 
     /// <summary>
     /// Calculate the damage this bullet will inflict onto a Destructable, based on
@@ -148,6 +177,63 @@ public class Bullet : MonoBehaviour
         return distance;
     }
 
+    #region TypeSize
+
+    public Type GetGameType()
+    {
+        return this.type;
+    }
+
+    public Size GetSize()
+    {
+        return this.size;
+    }
+
+    public void SetType(Type type)
+    {
+        this.type = type;
+    }
+
+    public void SetSize(Size size)
+    {
+        this.size = size;
+    }
+
+    /// <summary>
+    /// Damage the other gameObject if they are a Destructible.
+    /// </summary>
+    /// <param name="collider"></param>
+    /// <param name="other"></param>
+    public void OnAdvantage(GameObject collider, GameObject other)
+    {
+        try
+        {
+            IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
+            float damage = CalculateDamage(other.gameObject);
+            destructable.ReceiveDamage(damage);
+        }
+        catch (System.NullReferenceException e)
+        {
+            Debug.LogError(e);
+            return;
+        }
+    }
+
+    public void OnDisadvantage(GameObject collider, GameObject other)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// For bullets, this is the same as OnAdvantage().
+    /// </summary>
+    /// <param name="collider"></param>
+    /// <param name="other"></param>
+    public void OnNeutral(GameObject collider, GameObject other)
+    {
+        OnAdvantage(collider, other);
+    }
 
 
+    #endregion
 }

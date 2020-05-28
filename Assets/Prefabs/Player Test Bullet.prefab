@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7269158954774239939}
   - component: {fileID: 4486790172027159703}
   - component: {fileID: 6666684762450699817}
+  - component: {fileID: 2616197940441798044}
   m_Layer: 10
   m_Name: Player Test Bullet
   m_TagString: Player Bullet
@@ -108,3 +109,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2616197940441798044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6662922689987318932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  homingRate: 0
+  accelerating: 0
+  decelerating: 0
+  timeToMax: 0
+  timeToMin: 0
+  maxSpeed: 0
+  minSpeed: 0
+  deaccelerating: 0
+  timeInDecceleration: 0
