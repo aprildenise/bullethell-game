@@ -16,7 +16,6 @@ public class ManualShooter : Shooter
     private void Start()
     {
         base.RunStart();
-        base.SetAim(90f);
         this.enabled = true;
         timer = gameObject.AddComponent<Timer>();
         timer.SetTimer(shotDelay, Timer.Status.FINISHED);
@@ -31,13 +30,16 @@ public class ManualShooter : Shooter
         isShooting = allow;
     }
 
+    private void Update()
+    {
+        base.SetAim(PlayerController.GetPlayerController().transform.forward);
+    }
+
     /// <summary>
     /// Used to shoot as long as isShooting is true and Timer is FINISHED.
     /// </summary>
     private void FixedUpdate()
     {
-        //Debug.Log("is shooting:" + isShooting);
-        //Debug.Log("timer:" + timer.GetStatus());
         if (isShooting && timer.GetStatus() == Timer.Status.FINISHED)
         {
             Shoot();

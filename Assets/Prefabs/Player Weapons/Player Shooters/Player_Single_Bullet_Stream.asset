@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e131cecf320d58941bd2510666c91ebd, type: 3}
-  m_Name: Player_Wide_Spread
+  m_Name: Player_Single_Bullet_Stream
   m_EditorClassIdentifier: 
-  shooterName: FAN
+  shooterName: SINGLE
   prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
   speed: 50
   aimDegree: 0
-  shotDelay: 0.5
+  shotDelay: 0.1
   homing: 0
   equalArraySpread: 0
-  arrays: 3
-  arraySpread: 55
-  arrayGroups: 2
-  arrayGroupSpread: 40
-  type: 1
-  size: 1
+  arrays: 0
+  arraySpread: 0
+  arrayGroups: 0
+  arrayGroupSpread: 0
+  type: 0
+  size: 0

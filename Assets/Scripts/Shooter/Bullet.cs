@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     private BulletInfo b;
     [Header("Homing")]
+    public float baseSpeed; // Speed as given by the Shooter this came from.
     public float homingRate;
 
     [Header("Acceleration/Decceleration")]
@@ -43,7 +44,7 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     #region Bullet Operations
 
-    public void SetBullet(BulletInfo bulletInfo, Type type, Size size, string shooterName)
+    public void SetBullet(BulletInfo bulletInfo, Type type, Size size, string shooterName, float speed)
     {
         if (bulletInfo != null)
         {
@@ -58,14 +59,15 @@ public class Bullet : MonoBehaviour, ITypeSize
             this.timeInDecceleration = bulletInfo.timeInDecceleration;
         }
 
-        SetBullet(type, size, shooterName);
+        SetBullet(type, size, shooterName, speed);
     }
 
-    public void SetBullet(Type type, Size size, string shooterName)
+    public void SetBullet(Type type, Size size, string shooterName, float speed)
     {
         this.type = type;
         this.size = size;
         this.shooterName = shooterName;
+        this.baseSpeed = speed;
     }
 
     /// <summary>
@@ -73,13 +75,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     /// </summary>
     protected void Start()
     {
-
-        // CHANGE THIS
-        GameObject parent = transform.parent.gameObject;
-        Shooter shooter = parent.GetComponent<Shooter>();
-
-
-        velocity = shooter.speed;
+        velocity = baseSpeed;
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);

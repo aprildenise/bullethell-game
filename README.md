@@ -29,3 +29,7 @@ a bullet hell game for the #100daysofgamedev challenge
 * Created a new multiplicative mechanic, working on prototype.
 * Created a new branch type.
 * Implementing new player UI.
+
+05/26,27 - Day 19 + 20, 26 hours
+* Added new graphics to the UI.
+* Implemented the weapon change.

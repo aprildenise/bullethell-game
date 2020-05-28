@@ -83,6 +83,24 @@ public class PlayerController : MonoBehaviour, IDestructable
     void Update()
     {
 
+
+        // If the player is hitting space, show the weapon panel.
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (openedWeaponPanel)
+            {
+                weaponPanel.DeactivateWeaponPanel();
+                openedWeaponPanel = false;
+            }
+            else
+            {
+                openedWeaponPanel = true;
+                weaponPanel.ActivateWeaponPanel();
+            }
+        }
+
+        if (openedWeaponPanel) return;
+
         // Get axis input for movement.
         //Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
@@ -105,35 +123,36 @@ public class PlayerController : MonoBehaviour, IDestructable
             moveVelocity = moveInput.normalized * moveSpeed;
         }
 
-        // If the player is hitting space, show the weapon panel.
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        // Calculate the rotation of the player.
+        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayLength;
+        if (groundPlane.Raycast(cameraRay, out rayLength))
         {
-            if (openedWeaponPanel)
-            {
-                weaponPanel.DeactivateWeaponPanel();
-                openedWeaponPanel = false;
-            }
-            else
-            {
-                openedWeaponPanel = true;
-                weaponPanel.ActivateWeaponPanel();
-            }
+            Vector3 pointToLook = cameraRay.GetPoint(rayLength);
+            this.gameObject.transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
+
         }
 
     }
+
 
     /// <summary>
     /// Update is called for every physics update. Applies physics to the attached object to move the object based on player input.
     /// </summary>
     private void FixedUpdate()
     {
+
+        if (openedWeaponPanel) return;
+
         // Move the object based on the movement input
         rigidBody.MovePosition(rigidBody.position + moveVelocity * Time.fixedDeltaTime);
 
         // Get button input for firing.
         if (currentShooter != null)
         {
-            if (Input.GetKey(KeyCode.X))
+            if (Input.GetMouseButton(0))
             {
                 currentShooter.AllowShooting(true);
             }
@@ -172,6 +191,11 @@ public class PlayerController : MonoBehaviour, IDestructable
             }
         }
         
+    }
+
+    public string GetCurrentShooterName()
+    {
+        return currentShooter.shooterName;
     }
 
     #region Destructible

@@ -6,6 +6,7 @@ using UnityEngine;
 public class ShooterInfo : ScriptableObject
 {
 
+    public string shooterName;
     public GameObject prefab;
     public float speed;
     [Range(0, 360)]
