@@ -5,6 +5,10 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+
+/// <summary>
+/// Controls the UI that allows player to pick a weapon/Shooter based on Size and Type.
+/// </summary>
 public class WeaponPanel : MonoBehaviour
 {
 
@@ -14,6 +18,9 @@ public class WeaponPanel : MonoBehaviour
     public Button button1;
     public Button button2;
     public Button button3;
+    /// <summary>
+    /// Parent holding each subButton.
+    /// </summary>
     public CanvasGroup subButtons1Group;
     public CanvasGroup subButtons2Group;
     public CanvasGroup subButtons3Group;
@@ -25,6 +32,9 @@ public class WeaponPanel : MonoBehaviour
     // To communicate with the player.
     private Size currentSize;
     private Type currentType;
+    /// <summary>
+    /// Previously selected Size from the player, saved in case the Player does not choose a Type/Size upon opening this weapon panel.
+    /// </summary>
     private Size prevSize;
     private Type prevType;
     private PlayerController playerController;
@@ -33,10 +43,6 @@ public class WeaponPanel : MonoBehaviour
     private bool panelEnabled;
     private CanvasGroup subButtonsEnabled;
     private Animator animator;
-    //private Plane plane; // TODO Make this private eventually. 
-    //private float screenHeight;
-    //private float screenWidth;
-    //private Button previouslySelected;
 
 
     #endregion
@@ -80,6 +86,9 @@ public class WeaponPanel : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Deactivate the entire weapon panel by hiding it through the CanvasGroup, along with the other sub buttons. 
+    /// </summary>
     public void DeactivateWeaponPanel()
     {
         //weaponPanel.blocksRaycasts = false;
@@ -95,22 +104,28 @@ public class WeaponPanel : MonoBehaviour
         DeactivateSubButtons(subButtons3Group);
         panelEnabled = false;
         subButtonsEnabled = null;
+
+        // Set the animator.
         animator.SetBool("panelEnabled", false);
 
     }
 
+    /// <summary>
+    /// Activate the entire weapon by showing it through the CanvasGroup.
+    /// </summary>
     public void ActivateWeaponPanel()
     {
-        //weaponPanel.blocksRaycasts = true;
         weaponPanel.alpha = 1;
         panelEnabled = true;
 
-        // Pre-select a button.
-        //EventSystem.current.SetSelectedGameObject(previouslySelected.gameObject);
         animator.SetInteger("buttonSelected", -1);
         animator.SetBool("panelEnabled", true) ;
     }
 
+    /// <summary>
+    /// Deactivate a specific group of sub buttons.
+    /// </summary>
+    /// <param name="subButtons">subButtons to deactivate.</param>
     public void DeactivateSubButtons(CanvasGroup subButtons)
     {
         //subButtons.blocksRaycasts = false;
@@ -120,6 +135,11 @@ public class WeaponPanel : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Activate a specific group of sub buttons. By doing so, also deactivate any other sub buttons
+    /// that are currently activated.
+    /// </summary>
+    /// <param name="subButtons">subButtons to activate.</param>
     public void ActivateSubButtons(CanvasGroup subButtons)
     {
         // Activate the given subButtons.
@@ -146,23 +166,26 @@ public class WeaponPanel : MonoBehaviour
     }
 
 
-    //public void SetPreviouslySelected(Button button)
-    //{
-    //    this.previouslySelected = button; 
-    //    EventSystem.current.SetSelectedGameObject(previouslySelected.gameObject);
-    //}
-
+    /// <summary>
+    /// Save the Size that the player picked from the UI.
+    /// Called by a button's onClick().
+    /// </summary>
+    /// <param name="size">Size chosen by the player.</param>
     public void SetSize(int size)
     {
         currentSize = (Size)size;
         animator.SetInteger("buttonSelected", size);
     }
 
+    /// <summary>
+    /// Save the Type that the player picked from the UI. Since this is the last choice from the player, 
+    /// save what the player chose and set the player's Shooter.
+    /// Called by a button's onClick().
+    /// </summary>
+    /// <param name="type">Type chosen by the player.</param>
     public void SetType(int type)
     {
         currentType = (Type)type;
-
-        Debug.Log(currentSize + "," + currentType);
 
         // Since this it the final input, send the info to the player.
         SetCurrentShooter(currentType, currentSize);
@@ -172,92 +195,115 @@ public class WeaponPanel : MonoBehaviour
         prevType = currentType;
     }
 
-
+    /// <summary>
+    /// Based on Type and Size selected by the player, change the player's Shooter by sending the
+    /// given Type and Size to the PlayerController.
+    /// </summary>
+    /// <param name="type">Type of the Shooter.</param>
+    /// <param name="size">Size of the Shooter.</param>
     private void SetCurrentShooter(Type type, Size size)
     {
         playerController.SetCurrentShooter(type, size);
         currentShooterName.text = playerController.GetCurrentShooterName();
     }
 
+    /// <summary>
+    /// Control inputs from the player, if the panel is enabled.
+    /// </summary>
     private void Update()
     {
         if (!panelEnabled) return;
 
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //float distanceToPlane;
-        
-        //if (plane.Raycast(ray, out distanceToPlane))
-        //{
-        //    Debug.Log(ray.GetPoint(distanceToPlane));
+        // Get input.
+        float hInput = Input.GetAxis("Horizontal");
+        float vInput = Input.GetAxis("Vertical");
+        bool left = hInput < 0;
+        bool right = hInput > 0;
+        bool up = vInput > 0;
+        bool down = vInput < 0;
 
-        //}
 
         // Listen for input in order to control the event of the buttons.
         if (subButtonsEnabled != null)
         {
-
-            //Debug.Log("subbuttoned enabled");
-            if (Input.GetButton("Cancel"))
+            // If we are activating sub buttons, then button inputs depend on the Inputs from the player.
+            // A button will be highlighted based on the Inputs, NOT immediately selected.
+            if (subButtonsEnabled.Equals(subButtons1Group))
             {
-                //Debug.Log("Hit cancel");
-                ActivateSubButtons(subButtonsEnabled);
-                DeactivateSubButtons(subButtonsEnabled); // TODO fix this
-                subButtonsEnabled = null;
-                return;
-            }
-            else if (subButtonsEnabled.Equals(subButtons1Group))
-            {
-                if (Input.GetAxisRaw("Vertical") > 0)
+                if (up)
                 {
-                    //subButtons1Buttons[0].onClick.Invoke();
                     EventSystem.current.SetSelectedGameObject(subButtons1Buttons[0].gameObject);
+                    Input.ResetInputAxes();
                 }
-                else if (Input.GetAxisRaw("Vertical") < 0)
+                else if (left)
                 {
-                    //subButtons1Buttons[1].onClick.Invoke();
                     EventSystem.current.SetSelectedGameObject(subButtons1Buttons[1].gameObject);
+                    Input.ResetInputAxes();
+                }
+                // When the player chooses the "opposite button", "Cancel" the selected sub button and hide all other sub buttons.
+                else if (right)
+                {
+                    DeactivateSubButtons(subButtonsEnabled);
+                    subButtonsEnabled = null;
+                    Input.ResetInputAxes();
                 }
             }
             else if (subButtonsEnabled.Equals(subButtons2Group))
             {
-                if (Input.GetAxisRaw("Vertical") > 0)
+                if (up)
                 {
-                    //subButtons2Buttons[0].onClick.Invoke();
                     EventSystem.current.SetSelectedGameObject(subButtons2Buttons[0].gameObject);
+                    Input.ResetInputAxes();
                 }
-                else if (Input.GetAxisRaw("Vertical") < 0)
+                else if (right)
                 {
-                    //subButtons2Buttons[1].onClick.Invoke();
                     EventSystem.current.SetSelectedGameObject(subButtons2Buttons[1].gameObject);
+                    Input.ResetInputAxes();
+                }
+                // When the player chooses the "opposite button", "Cancel" the selected sub button and hide all other sub buttons.
+                else if (left)
+                {
+                    DeactivateSubButtons(subButtonsEnabled);
+                    subButtonsEnabled = null;
+                    Input.ResetInputAxes();
                 }
             }
             else if (subButtonsEnabled.Equals(subButtons3Group))
             {
-                if (Input.GetAxisRaw("Horizontal") < 0)
+                if (left)
                 {
-                    //subButtons3Buttons[0].onClick.Invoke();
                     EventSystem.current.SetSelectedGameObject(subButtons3Buttons[0].gameObject);
+                    Input.ResetInputAxes();
                 }
-                else if (Input.GetAxisRaw("Horizontal") > 0)
+                else if (right)
                 {
-                    //subButtons3Buttons[1].onClick.Invoke();
-                    EventSystem.current.SetSelectedGameObject(subButtons1Buttons[1].gameObject);
+                    EventSystem.current.SetSelectedGameObject(subButtons3Buttons[1].gameObject);
+                    Input.ResetInputAxes();
+                }
+                else if (up)
+                {
+                    DeactivateSubButtons(subButtonsEnabled);
+                    subButtonsEnabled = null;
+                    Input.ResetInputAxes();
                 }
             }
         }
         else
         {
-            if (Input.GetAxisRaw("Horizontal") < 0)
+            if (left)
             {
                 button1.onClick.Invoke();
+                Input.ResetInputAxes();
             }
-            else if (Input.GetAxisRaw("Horizontal") > 0)
+            else if (right)
             {
                 button2.onClick.Invoke();
+                Input.ResetInputAxes();
             }
-            else if (Input.GetAxisRaw("Vertical") < 0)
+            else if (down)
             {
                 button3.onClick.Invoke();
+                Input.ResetInputAxes();
             }
         }
 
