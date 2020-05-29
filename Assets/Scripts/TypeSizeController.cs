@@ -7,25 +7,25 @@ public class TypeSizeController
     /// <summary>
     /// Determine the interaction between two objects, based on their types/sizes.
     /// </summary>
-    /// <param name="collider"></param>
-    /// <param name="other"></param>
-    public static void Interact(GameObject collider, GameObject other)
+    /// <param name="origin">GameObject that contains the Collider that triggered the interaction.</param>
+    /// <param name="other">GameObject that collided with the origin's Collider.</param>
+    public static void Interact(GameObject origin, GameObject other)
     {
 
-        ITypeSize incoming;
-        ITypeSize receiving;
+        ITypeSize originType;
+        ITypeSize otherType;
         try
         {
-            incoming = collider.GetComponent<ITypeSize>();
-            receiving = other.GetComponent<ITypeSize>();
-            Matchup matchup = CheckMatchup(incoming, receiving);
-            if (matchup == Matchup.ADVANTAGE) receiving.OnAdvantage(collider, other);
-            else if (matchup == Matchup.DISADVANTAGE) receiving.OnDisadvantage(collider, other);
-            else receiving.OnNeutral(collider, other);
+            originType = origin.GetComponent<ITypeSize>();
+            otherType = other.GetComponent<ITypeSize>();
+            Matchup matchup = CheckMatchup(originType, otherType);
+            if (matchup == Matchup.ADVANTAGE) originType.OnAdvantage(origin, other);
+            else if (matchup == Matchup.DISADVANTAGE) otherType.OnDisadvantage(origin, other);
+            else otherType.OnNeutral(origin, other);
         }
         catch(System.NullReferenceException)
         {
-            // These objects don't need to interact when they collide.
+            // TODO These objects don't need to interact when they collide?
             return;
         }
     }

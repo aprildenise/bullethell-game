@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using System.Resources;
 
 /// <summary>
 /// Controls the UI that allows player to pick a weapon/Shooter based on Size and Type.
@@ -71,6 +71,7 @@ public class WeaponPanel : MonoBehaviour
     private void Start()
     {
 
+
         playerController = PlayerController.GetPlayerController();
         animator = GetComponent<Animator>();
 
@@ -128,12 +129,16 @@ public class WeaponPanel : MonoBehaviour
     /// <param name="subButtons">subButtons to deactivate.</param>
     public void DeactivateSubButtons(CanvasGroup subButtons)
     {
-        //subButtons.blocksRaycasts = false;
         subButtons.alpha = 0;
         animator.SetInteger("buttonSelected", -1);
-        
+
+        // Reset the Button Animator.
+        if (subButtons.Equals(subButtons1Group)) ResetSubButtonAnimator(subButtons1Buttons);
+        else if (subButtons.Equals(subButtons2Group)) ResetSubButtonAnimator(subButtons2Buttons);
+        else ResetSubButtonAnimator(subButtons3Buttons);
 
     }
+
 
     /// <summary>
     /// Activate a specific group of sub buttons. By doing so, also deactivate any other sub buttons
@@ -207,6 +212,26 @@ public class WeaponPanel : MonoBehaviour
         currentShooterName.text = playerController.GetCurrentShooterName();
     }
 
+    private void ResetSubButtonAnimator(Button[] subButtons)
+    {
+        foreach (Button button in subButtons)
+        {
+            ResetSubButtonAnimator(button);
+        }
+    }
+
+    private void ResetSubButtonAnimator(Button button)
+    {
+        Animator anim = button.gameObject.GetComponent<Animator>();
+        anim.SetTrigger("Normal");
+    }
+
+    private void SetInteractible(Button[] subButtons, int interactable, int notInteractible)
+    {
+        subButtons[interactable].interactable = true;
+        subButtons[notInteractible].interactable = false;
+    }
+
     /// <summary>
     /// Control inputs from the player, if the panel is enabled.
     /// </summary>
@@ -233,15 +258,17 @@ public class WeaponPanel : MonoBehaviour
                 if (up)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons1Buttons[0].gameObject);
+                    SetInteractible(subButtons1Buttons, 0, 1);
                     Input.ResetInputAxes();
                 }
                 else if (left)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons1Buttons[1].gameObject);
+                    SetInteractible(subButtons1Buttons, 1, 0);
                     Input.ResetInputAxes();
                 }
                 // When the player chooses the "opposite button", "Cancel" the selected sub button and hide all other sub buttons.
-                else if (right)
+                else if (right || down)
                 {
                     DeactivateSubButtons(subButtonsEnabled);
                     subButtonsEnabled = null;
@@ -253,15 +280,17 @@ public class WeaponPanel : MonoBehaviour
                 if (up)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons2Buttons[0].gameObject);
+                    SetInteractible(subButtons2Buttons, 0, 1);
                     Input.ResetInputAxes();
                 }
                 else if (right)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons2Buttons[1].gameObject);
+                    SetInteractible(subButtons2Buttons, 1, 0);
                     Input.ResetInputAxes();
                 }
                 // When the player chooses the "opposite button", "Cancel" the selected sub button and hide all other sub buttons.
-                else if (left)
+                else if (left || down)
                 {
                     DeactivateSubButtons(subButtonsEnabled);
                     subButtonsEnabled = null;
@@ -273,11 +302,13 @@ public class WeaponPanel : MonoBehaviour
                 if (left)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons3Buttons[0].gameObject);
+                    SetInteractible(subButtons3Buttons, 0, 1);
                     Input.ResetInputAxes();
                 }
                 else if (right)
                 {
                     EventSystem.current.SetSelectedGameObject(subButtons3Buttons[1].gameObject);
+                    SetInteractible(subButtons3Buttons, 1, 0);
                     Input.ResetInputAxes();
                 }
                 else if (up)

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Player_Single_Bullet_Stream
   m_EditorClassIdentifier: 
   shooterName: SINGLE
+  damageMultiplier: 0.1
   prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
   speed: 50
   aimDegree: 0
@@ -23,5 +24,5 @@ MonoBehaviour:
   arraySpread: 0
   arrayGroups: 0
   arrayGroupSpread: 0
-  type: 0
-  size: 0
+  shooterType: 0
+  shooterSize: 0

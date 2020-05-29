@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     // From bulletInfo. fields are public for now
 
-    private BulletInfo b;
+    private BulletInfo bulletInfo;
     [Header("Homing")]
     public float baseSpeed; // Speed as given by the Shooter this came from.
     public float homingRate;
@@ -34,17 +34,19 @@ public class Bullet : MonoBehaviour, ITypeSize
     private float timer = 0;
 
     // Type and size of the weapon that shot this bullet.
-    private Type type;
-    private Size size;
-
+    private Type shooterType;
+    private Size shooterSize;
     private Vector3 origin;
-    private string shooterName;
+    /// <summary>
+    /// The Shooter that init this Bullet.
+    /// </summary>
+    private Shooter shooter;
 
     #endregion
 
     #region Bullet Operations
 
-    public void SetBullet(BulletInfo bulletInfo, Type type, Size size, string shooterName, float speed)
+    public void SetBulletInfo(BulletInfo bulletInfo)
     {
         if (bulletInfo != null)
         {
@@ -58,16 +60,19 @@ public class Bullet : MonoBehaviour, ITypeSize
             this.deaccelerating = bulletInfo.deaccelerating;
             this.timeInDecceleration = bulletInfo.timeInDecceleration;
         }
-
-        SetBullet(type, size, shooterName, speed);
     }
 
-    public void SetBullet(Type type, Size size, string shooterName, float speed)
+    public void SetShooter(Shooter shooter)
     {
-        this.type = type;
-        this.size = size;
-        this.shooterName = shooterName;
-        this.baseSpeed = speed;
+        this.shooter = shooter;
+        this.shooterType = shooter.shooterType;
+        this.shooterSize = shooter.shooterSize;
+        this.baseSpeed = shooter.speed;
+    }
+
+    public Shooter GetShooter()
+    {
+        return shooter;
     }
 
     /// <summary>
@@ -152,13 +157,14 @@ public class Bullet : MonoBehaviour, ITypeSize
         // Make sure bullets from the same weapon aren't colliding with each other
         try
         {
-            Bullet b = other.gameObject.GetComponent<Bullet>();
-            if (b.shooterName == this.shooterName)
+            Bullet bullet = other.gameObject.GetComponent<Bullet>();
+            if (bullet.GetShooter().Equals(shooter))
             {
                 return;
             }
         } catch (System.NullReferenceException)
         {
+            // Interact with what was collided.
             TypeSizeController.Interact(this.gameObject, other.gameObject);
         }
         
@@ -166,41 +172,30 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     #endregion
 
-    /// <summary>
-    /// Calculate the damage this bullet will inflict onto a Destructable, based on
-    /// the distance from the target and this bullet's shooter.
-    /// </summary>
-    /// <returns>Damage calculated</returns>
-    protected virtual float CalculateDamage(GameObject target)
-    {
-        float distance = Vector3.Distance(target.transform.position, origin);
-        return distance;
-    }
-
     #region TypeSize
 
     public Type GetGameType()
     {
-        return this.type;
+        return this.shooterType;
     }
 
     public Size GetSize()
     {
-        return this.size;
+        return this.shooterSize;
     }
 
     public void SetType(Type type)
     {
-        this.type = type;
+        this.shooterType = type;
     }
 
     public void SetSize(Size size)
     {
-        this.size = size;
+        this.shooterSize = size;
     }
 
     /// <summary>
-    /// Damage the other gameObject if they are a Destructible.
+    /// Damage the other GameObject, only if they are a Destructible.
     /// </summary>
     /// <param name="collider"></param>
     /// <param name="other"></param>
@@ -208,15 +203,27 @@ public class Bullet : MonoBehaviour, ITypeSize
     {
         try
         {
+            // Inflict damage and destroy this Bullet.
             IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
             float damage = CalculateDamage(other.gameObject);
             destructable.ReceiveDamage(damage);
+            Destroy(this.gameObject);
         }
-        catch (System.NullReferenceException e)
+        catch (System.NullReferenceException)
         {
-            Debug.LogError(e);
-            return;
+            // They are not a Destructible.
         }
+    }
+
+    /// <summary>
+    /// Calculate the damage this bullet will inflict onto a Destructable, based on
+    /// the distance from the target and this bullet's shooter.
+    /// </summary>
+    /// <returns>Damage calculated.</returns>
+    protected virtual float CalculateDamage(GameObject target)
+    {
+        float distance = Vector3.Distance(target.transform.position, origin);
+        return distance + (distance * shooter.damageMultiplier);
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)

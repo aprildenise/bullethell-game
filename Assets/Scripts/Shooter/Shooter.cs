@@ -5,14 +5,15 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     #region Variables
 
-    // Attributes for the bullets in the shooter
+    // Attributes for the bullets in the shooter.
     [SerializeField] BulletInfo bulletInfo;
 
-    // Attributes of this shooter
+    // Attributes of this shooter.
     [SerializeField]
     private ShooterInfo shooterInfo;
     public string shooterName;
-    public GameObject prefab;
+    public float damageMultiplier;
+    public GameObject prefab; // Bullet prefab.
     public float speed;
     public float aimDegree;
     public float shotDelay;
@@ -26,16 +27,16 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     [Range(0, 360)]
     public float arrayGroupSpread;
 
-    // For class calculations
+    // For class calculations.
     protected Vector3 aimVector;
     protected Vector3 center;
     protected bool isShooting;
     protected bool inDelay;
     protected int shots;
 
-    // Type and size of this weapon
-    public Type type;
-    public Size size;
+    // Type and size of this weapon.
+    public Type shooterType;
+    public Size shooterSize;
     #endregion
 
     /// <summary>
@@ -54,7 +55,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
         if (shooterInfo != null)
         {
-            SetWithShooterInfo();
+            SetShooterInfo(shooterInfo);
         }
 
         // Logic checks
@@ -193,8 +194,8 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
         // If this Shooter has a Bullet Info, add that info to the new Bullet object.
         // Else, just set the type and the size.
-        if (bulletInfo != null) b.SetBullet(bulletInfo, type, size, this.gameObject.name, speed);
-        else b.SetBullet(type, size, this.gameObject.name, speed);
+        if (bulletInfo != null) b.SetBulletInfo(bulletInfo);
+        b.SetShooter(this);
 
         // Fire the bullet
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
@@ -276,8 +277,9 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         }
     }
 
-    private void SetWithShooterInfo()
+    private void SetShooterInfo(ShooterInfo shooterInfo)
     {
+        this.shooterInfo = shooterInfo;
         shooterName = shooterInfo.shooterName;
         prefab = shooterInfo.prefab;
         speed = shooterInfo.speed;
@@ -289,20 +291,20 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         arraySpread = shooterInfo.arraySpread;
         arrayGroups = shooterInfo.arrayGroups;
         arrayGroupSpread = shooterInfo.arrayGroupSpread;
-        type = shooterInfo.type;
-        size = shooterInfo.size;
+        shooterType = shooterInfo.shooterType;
+        shooterSize = shooterInfo.shooterSize;
     }
 
     #region TypeSize
 
     public Type GetGameType()
     {
-        return this.type;
+        return this.shooterType;
     }
 
     public Size GetSize()
     {
-        return this.size;
+        return this.shooterSize;
     }
 
     public void SetType(Type type)
@@ -332,11 +334,14 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     #endregion
 
+    /// <summary>
+    /// For testing only.
+    /// </summary>
     private void OnValidate()
     {
         if (shooterInfo != null)
         {
-            SetWithShooterInfo();
+            SetShooterInfo(this.shooterInfo);
         }
     }
 }
