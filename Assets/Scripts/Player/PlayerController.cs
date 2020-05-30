@@ -179,7 +179,7 @@ public class PlayerController : MonoBehaviour, IDestructable
         // Find the shooter in the available shooters.
         foreach (ManualShooter s in availableShooters)
         {
-            Debug.Log("s:" + s.GetGameType() + s.GetSize());
+            //Debug.Log("s:" + s.GetGameType() + s.GetSize());
             if (TypeSizeController.Equals(s.GetGameType(), type) && TypeSizeController.Equals(s.GetSize(), size))
             {
                 //TODO See if it's appropriate to simply deactivate

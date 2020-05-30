@@ -21,7 +21,12 @@ public class TypeSizeController
             Matchup matchup = CheckMatchup(originType, otherType);
             if (matchup == Matchup.ADVANTAGE) originType.OnAdvantage(origin, other);
             else if (matchup == Matchup.DISADVANTAGE) otherType.OnDisadvantage(origin, other);
-            else otherType.OnNeutral(origin, other);
+            else
+            {
+                originType.OnNeutral(origin, other);
+                otherType.OnNeutral(origin, other);
+            }
+                
         }
         catch(System.NullReferenceException)
         {

@@ -51,7 +51,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     public void ReceiveDamage(float damageReceived)
     {
-        healthPoints -= damageReceived;
+        healthPoints = healthPoints - damageReceived;
         Debug.Log(healthPoints);
         if (!HasHealth())
         {
@@ -95,18 +95,18 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     public void OnAdvantage(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
+        
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        // Calculate the damage based on distance and damage multipliers.
-        float distance = Vector3.Distance(collider.gameObject.transform.position, other.transform.position);
+        Destroy(other);
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
 

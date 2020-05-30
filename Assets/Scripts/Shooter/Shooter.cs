@@ -281,6 +281,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     {
         this.shooterInfo = shooterInfo;
         shooterName = shooterInfo.shooterName;
+        damageMultiplier = shooterInfo.damageMultiplier;
         prefab = shooterInfo.prefab;
         speed = shooterInfo.speed;
         aimDegree = shooterInfo.aimDegree;

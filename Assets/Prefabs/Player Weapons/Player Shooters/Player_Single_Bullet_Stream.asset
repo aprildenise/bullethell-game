@@ -17,7 +17,7 @@ MonoBehaviour:
   prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
   speed: 50
   aimDegree: 0
-  shotDelay: 0.1
+  shotDelay: 2
   homing: 0
   equalArraySpread: 0
   arrays: 0

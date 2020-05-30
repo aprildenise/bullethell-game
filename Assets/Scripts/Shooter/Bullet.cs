@@ -215,7 +215,7 @@ public class Bullet : MonoBehaviour, ITypeSize
         }
     }
 
-    /// <summary>
+    /// <summary> 
     /// Calculate the damage this bullet will inflict onto a Destructable, based on
     /// the distance from the target and this bullet's shooter.
     /// </summary>
@@ -223,12 +223,12 @@ public class Bullet : MonoBehaviour, ITypeSize
     protected virtual float CalculateDamage(GameObject target)
     {
         float distance = Vector3.Distance(target.transform.position, origin);
-        return distance + (distance * shooter.damageMultiplier);
+        return distance * shooter.damageMultiplier;
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     /// <summary>
