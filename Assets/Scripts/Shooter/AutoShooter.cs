@@ -3,6 +3,10 @@ using UnityEngine;
 
 public abstract class AutoShooter : Shooter
 {
+
+
+    public AutoShooterInfo autoShooterInfo;
+
     [Header("Main Enemy Shooter")]
     public float startDelay;
 
@@ -20,6 +24,7 @@ public abstract class AutoShooter : Shooter
 
     protected int sets;
 
+    // For calculations.
     private Timer startDelayTimer;
     private Timer shotDelayTimer;
     private Timer setDelayTimer;
@@ -33,6 +38,22 @@ public abstract class AutoShooter : Shooter
         this.FixedUpdate();
     }
     
+    public void SetAutoShooterInfo(AutoShooterInfo info)
+    {
+        shooterInfo = info.shooterInfo;
+        SetShooterInfo(shooterInfo);
+        autoShooterInfo = info;
+        startDelay = info.startDelay;
+        shootInSets = info.shootInSets;
+        shotsPerSet = info.shotsPerSet;
+        setDelay = info.setDelay;
+        requiredShots = info.requiredShots;
+        requiredSets = info.requiredSets;
+        constantRotation = info.constantRotation;
+        spinAngle = info.spinAngle;
+        sets = info.sets;
+
+}
 
     /// <summary>
     /// If this shot is homing, set the aim automatically to the player.
@@ -53,7 +74,7 @@ public abstract class AutoShooter : Shooter
     /// <summary>
     /// Set the aim, timers, and run start of the parent through RunStart().
     /// </summary>
-    protected void Start()
+    protected void Awake()
     {
         RunStart();
         SetAim(aimDegree);
@@ -83,7 +104,7 @@ public abstract class AutoShooter : Shooter
     /// Being shooting. Note that this does not immediately shoot. The auto shooter is allowed to shoot IFF
     /// the start delay, shot delay, and set delay have all passed.
     /// </summary>
-    protected void BeginShooting()
+    public void BeginShooting()
     {
         // Check the start delay.
         if (startDelayTimer.GetStatus() == Timer.Status.RUNNING)
@@ -113,7 +134,7 @@ public abstract class AutoShooter : Shooter
         else if (check2 == Timer.Status.FINISHED)
         {
             // Restart this timer.
-            Debug.Log("Passed shot delay");
+            //Debug.Log("Passed shot delay");
             shotDelayTimer.StartTimer();
         }
 
@@ -134,6 +155,14 @@ public abstract class AutoShooter : Shooter
         {
             aimDegree += spinAngle;
             aimVector = new Vector3(Mathf.Cos(aimDegree * Mathf.Deg2Rad), 0, Mathf.Sin(aimDegree * Mathf.Deg2Rad));
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (autoShooterInfo != null)
+        {
+            SetAutoShooterInfo(autoShooterInfo);
         }
     }
 

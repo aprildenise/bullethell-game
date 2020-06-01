@@ -6,8 +6,8 @@ public class Bullet : MonoBehaviour, ITypeSize
 {
     #region Variables
 
-    // From bulletInfo. fields are public for now
 
+    [SerializeField]
     private BulletInfo bulletInfo;
     [Header("Homing")]
     public float baseSpeed; // Speed as given by the Shooter this came from.
@@ -25,6 +25,23 @@ public class Bullet : MonoBehaviour, ITypeSize
     public bool deaccelerating;
     public float timeInDecceleration;
 
+    [Header("Exploding")]
+    public bool explodeOnContact;
+    public float explosionRadius;
+    //public float explosionForce;
+    [SerializeField]
+    private GameObject explosionEffect;
+
+    [Header("Spawn More Bullets")]
+    public bool spawnMoreBullets;
+    public float timeToSpawn;
+    public GameObject spawnerPrefab;
+
+    [Header("Despawn Over Time")]
+    public bool despawnOverTime;
+    public float timeToDespawn;
+
+
     // For class computations
     private Transform target;
     private Rigidbody rigidBody;
@@ -32,6 +49,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     private float acceleration;
     private float deceleration;
     private float timer = 0;
+    private Timer spawnMoreTimer;
 
     // Type and size of the weapon that shot this bullet.
     private Type shooterType;
@@ -40,7 +58,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     /// <summary>
     /// The Shooter that init this Bullet.
     /// </summary>
-    private Shooter shooter;
+    private Shooter shooter; // TODO Will this loose reference when the original shooter is gone?
 
     #endregion
 
@@ -59,6 +77,13 @@ public class Bullet : MonoBehaviour, ITypeSize
             this.minSpeed = bulletInfo.minSpeed;
             this.deaccelerating = bulletInfo.deaccelerating;
             this.timeInDecceleration = bulletInfo.timeInDecceleration;
+            this.explodeOnContact = bulletInfo.explodeOnContact;
+            this.explosionRadius = bulletInfo.explosionRadius;
+            //explosionForce = bulletInfo.explosionForce;
+            explosionEffect = bulletInfo.explosionEffect;
+            spawnMoreBullets = bulletInfo.spawnMoreBullets;
+            timeToSpawn = bulletInfo.timeToSpawn;
+            spawnerPrefab = bulletInfo.spawnerPrefab;
         }
     }
 
@@ -75,24 +100,55 @@ public class Bullet : MonoBehaviour, ITypeSize
         return shooter;
     }
 
+    //public void SetLayer(int layer)
+    //{
+    //    this.layer = layer;
+    //    gameObject.layer = layer;
+    //}
+
+    protected virtual void RunStart()
+    {
+        Start();
+    }
+
     /// <summary>
     /// Set up this bullet.
     /// </summary>
-    protected void Start()
+    private void Start()
     {
         velocity = baseSpeed;
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
-
         origin = this.transform.position;
+
+        if (spawnMoreBullets)
+        {
+            spawnMoreTimer = gameObject.AddComponent<Timer>();
+            spawnMoreTimer.SetTimer(timeToSpawn);
+            spawnMoreTimer.StartTimer();
+        }
     }
 
     /// <summary>
     /// Find the acceleration and deceleration of the bullet.
     /// </summary>
-    protected void Update()
+    private void Update()
     {
+
+        if (spawnMoreBullets)
+        {
+            if (spawnMoreTimer.GetStatus() == Timer.Status.FINISHED)
+            {
+                GameObject obj = (GameObject) Instantiate(spawnerPrefab, transform.position, transform.rotation, SpawnPoint.GetSpawnPoint().transform);
+                //DiscreteShooter shooter = obj.GetComponent<DiscreteShooter>();
+                //shooter.BeginShooting();
+                //PrefabController.GetInstance().InitPrefab("", transform.position, transform.rotation, SpawnPoint.GetSpawnPoint().transform);
+                Destroy(this.gameObject);
+                spawnMoreBullets = false;
+            }
+        }
+
         if (deaccelerating)
         {
             if (velocity == minSpeed && timer > timeInDecceleration)
@@ -150,25 +206,78 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     /// <summary>
     /// Interact with what was just collided based on Typing and Size rules.
+    /// If this is an exploding bullet, the exploding action takes priority.
     /// </summary>
     /// <param name="other"></param>
     protected void OnTriggerEnter(Collider other)
     {
-        // Make sure bullets from the same weapon aren't colliding with each other
-        try
+
+        Debug.Log("collision between:" + other.gameObject.name + "," + gameObject.name);
+        // Check if we're colliding with someting on the same sorting layer, or in the Environment layer
+        // then don't interact with it.
+        if (other.gameObject.layer == this.gameObject.layer || other.gameObject.layer == LayerMask.NameToLayer("Environment")) return;
+
+        // Explosions get first priority.
+        if (explodeOnContact)
         {
-            Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            if (bullet.GetShooter().Equals(shooter))
-            {
-                return;
-            }
-        } catch (System.NullReferenceException)
-        {
-            // Interact with what was collided.
-            TypeSizeController.Interact(this.gameObject, other.gameObject);
+            Explode();
+            return;
         }
-        
+
+        // Check if we're interacting with a bullet.
+        Bullet otherBullet = other.gameObject.GetComponent<Bullet>();
+        if (otherBullet != null)
+        {
+            // Make sure this bullet isn't interacting with a bullet from the same Shooter.
+            if (GetShooter().Equals(otherBullet.GetShooter())) return;
+        }
+
+        // Everything checks out!
+        TypeSizeController.Interact(this.gameObject, other.gameObject);
+
     }
+
+
+    /// <summary> 
+    /// Calculate the damage this bullet will inflict onto a Destructable, based on
+    /// the distance from the target and this bullet's shooter.
+    /// </summary>
+    /// <returns>Damage calculated</returns>
+    public virtual float CalculateDamage(GameObject target)
+    {
+        float distance = Vector3.Distance(target.transform.position, origin);
+        return distance * shooter.damageMultiplier;
+    }
+
+    private void Explode()
+    {
+        if (!explodeOnContact) return;
+
+        // TODO instantiate effect.
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius, ~(1 << LayerMask.NameToLayer("Environment")));
+        foreach (Collider collider in colliders)
+        {
+            Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
+
+            // If this RB has a destructible, it receives damage.
+            IDestructable destructable = rb.gameObject.GetComponent<IDestructable>();
+            if (destructable != null)
+            {
+                destructable.ReceiveDamage(CalculateDamage(rb.gameObject));
+                continue;
+            }
+
+            // If this is a bullet, the bullet gets destroyed.
+            Bullet bullet = rb.gameObject.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                Destroy(bullet.gameObject);
+            }
+            //rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+        }
+
+    } 
 
     #endregion
 
@@ -194,53 +303,35 @@ public class Bullet : MonoBehaviour, ITypeSize
         this.shooterSize = size;
     }
 
-    /// <summary>
-    /// Damage the other GameObject, only if they are a Destructible.
-    /// </summary>
-    /// <param name="collider"></param>
-    /// <param name="other"></param>
     public void OnAdvantage(GameObject collider, GameObject other)
     {
-        try
-        {
-            // Inflict damage and destroy this Bullet.
-            IDestructable destructable = other.gameObject.GetComponent<IDestructable>();
-            float damage = CalculateDamage(other.gameObject);
-            destructable.ReceiveDamage(damage);
-            Destroy(this.gameObject);
-        }
-        catch (System.NullReferenceException)
-        {
-            // They are not a Destructible.
-        }
+        Debug.Log("BULLET ADVANTAGE");
     }
 
-    /// <summary> 
-    /// Calculate the damage this bullet will inflict onto a Destructable, based on
-    /// the distance from the target and this bullet's shooter.
-    /// </summary>
-    /// <returns>Damage calculated.</returns>
-    protected virtual float CalculateDamage(GameObject target)
+    public void OnNeutral(GameObject collider, GameObject other)
     {
-        float distance = Vector3.Distance(target.transform.position, origin);
-        return distance * shooter.damageMultiplier;
+
+        Debug.Log("BULLET NEUTRAL");
+
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        //throw new System.NotImplementedException();
-    }
+        Debug.Log("BULLET DISADVANTAGE");
 
-    /// <summary>
-    /// For bullets, this is the same as OnAdvantage().
-    /// </summary>
-    /// <param name="collider"></param>
-    /// <param name="other"></param>
-    public void OnNeutral(GameObject collider, GameObject other)
-    {
-        OnAdvantage(collider, other);
     }
 
 
     #endregion
+
+    /// <summary>
+    /// For testing only.
+    /// </summary>
+    private void OnValidate()
+    {
+        if (bulletInfo != null)
+        {
+            SetBulletInfo(bulletInfo);
+        }
+    }
 }

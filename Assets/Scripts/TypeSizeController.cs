@@ -12,6 +12,8 @@ public class TypeSizeController
     public static void Interact(GameObject origin, GameObject other)
     {
 
+        //Debug.Log("ORIGIN:" + origin + "OTHER:" + other.transform.gameObject);
+
         ITypeSize originType;
         ITypeSize otherType;
         try
@@ -19,8 +21,16 @@ public class TypeSizeController
             originType = origin.GetComponent<ITypeSize>();
             otherType = other.GetComponent<ITypeSize>();
             Matchup matchup = CheckMatchup(originType, otherType);
-            if (matchup == Matchup.ADVANTAGE) originType.OnAdvantage(origin, other);
-            else if (matchup == Matchup.DISADVANTAGE) otherType.OnDisadvantage(origin, other);
+            if (matchup == Matchup.ADVANTAGE)
+            {
+                originType.OnAdvantage(origin, other);
+                //otherType.OnDisadvantage(origin, other);
+            }
+            else if (matchup == Matchup.DISADVANTAGE)
+            {
+                otherType.OnDisadvantage(origin, other);
+                //otherType.OnAdvantage(origin, other);
+            }
             else
             {
                 originType.OnNeutral(origin, other);

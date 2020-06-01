@@ -11,10 +11,9 @@ public class ActivateByProximity : MonoBehaviour
 {
 
     private GameObject target;
-    //public float radiusOfCollider;
+    public float distance;
 
     // Components
-    private new SphereCollider collider;
     private IActivator activator;
 
     /// <summary>
@@ -25,16 +24,16 @@ public class ActivateByProximity : MonoBehaviour
 
         // Find the components.
         activator = GetComponent<IActivator>();
-        try
-        {
-            collider = gameObject.GetComponent<SphereCollider>();
-        } catch (System.NullReferenceException)
-        {
-            collider = gameObject.AddComponent<SphereCollider>();
 
+    }
+
+    private void Update()
+    {
+        //Debug.Log(Vector3.Distance(transform.position, target.transform.position));
+        if (Vector3.Distance(transform.position, target.transform.position) <= distance)
+        {
+            activator.Activate();
         }
-        collider.isTrigger = true;
-
     }
 
     public void SetTarget(GameObject o)
@@ -42,11 +41,5 @@ public class ActivateByProximity : MonoBehaviour
         this.target = o;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.Equals(target))
-        {
-            activator.Activate();
-        }
-    }
+
 }

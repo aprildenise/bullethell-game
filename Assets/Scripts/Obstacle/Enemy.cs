@@ -11,19 +11,30 @@ public class Enemy : Obstacle, IActivator
     /// <summary>
     /// Controls this Enemy to follow a curve.
     /// </summary>
-    protected FollowCurve followCurve;
+    [SerializeField]
+    protected FollowCurve followCurve; // Enemy does not have to have a FollowCurve Component.
     protected ActivateByProximity activate;
+
+    // For Enemy AI.
+    protected bool hasActivated;
 
     #endregion 
 
     #region Activator
     /// <summary>
-    /// Calls the DoSomething() function.
+    /// Calls the DoSomething() function, iff this Enemy has not already activated.
     /// </summary>
     public void Activate()
     {
+        if (HasActivated()) return;
         Debug.Log(this.gameObject.name + " activated.");
+        hasActivated = true;
         DoSomething();
+    }
+
+    public bool HasActivated()
+    {
+        return hasActivated;
     }
 
     #endregion
@@ -33,7 +44,6 @@ public class Enemy : Obstacle, IActivator
     /// </summary>
     protected virtual void DoSomething()
     {
-        Debug.Log(name + " activated.");
         BecomePhysical();
         FollowCurve();
     }
@@ -51,11 +61,14 @@ public class Enemy : Obstacle, IActivator
 
     /// <summary>
     /// Allow this object to begin following a curve by using its FollowCurve Follow().
+    /// The object stays in place if there is no FollowCurve Component attached.
     /// </summary>
     protected void FollowCurve()
     {
-        followCurve.Follow(true);
+        if (followCurve != null) followCurve.Follow(true);
     }
+
+    #region Enemy Functions
 
     /// <summary>
     /// Run this object's Start() function. Called by children of this class.
@@ -71,11 +84,9 @@ public class Enemy : Obstacle, IActivator
     private void Start()
     {
         enabled = false;
+        hasActivated = false;
         // Get this Enemy's Components.
-        if (followCurve == false)
-        {
-            followCurve = GetComponent<FollowCurve>();
-        }
+        //followCurve = GetComponent<FollowCurve>();
         hitBox = GetComponent<BoxCollider>();
         mesh = GetComponent<MeshRenderer>();
         activate = GetComponent<ActivateByProximity>();
@@ -99,4 +110,5 @@ public class Enemy : Obstacle, IActivator
         }
     }
 
+    #endregion
 }

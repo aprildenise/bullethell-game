@@ -73,6 +73,7 @@ public class WeaponPanel : MonoBehaviour
 
 
         playerController = PlayerController.GetPlayerController();
+
         animator = GetComponent<Animator>();
 
         DeactivateWeaponPanel();
@@ -82,7 +83,7 @@ public class WeaponPanel : MonoBehaviour
         panelEnabled = false;
         subButtonsEnabled = null;
 
-
+        SetText();
 
     }
 
@@ -209,6 +210,11 @@ public class WeaponPanel : MonoBehaviour
     private void SetCurrentShooter(Type type, Size size)
     {
         playerController.SetCurrentShooter(type, size);
+        SetText();
+    }
+
+    private void SetText()
+    {
         currentShooterName.text = playerController.GetCurrentShooterName();
     }
 

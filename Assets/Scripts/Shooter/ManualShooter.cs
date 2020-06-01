@@ -16,7 +16,7 @@ public class ManualShooter : Shooter
     private void Start()
     {
         base.RunStart();
-        this.enabled = true;
+        //this.enabled = true;
         timer = gameObject.AddComponent<Timer>();
         timer.SetTimer(shotDelay, Timer.Status.FINISHED);
     }

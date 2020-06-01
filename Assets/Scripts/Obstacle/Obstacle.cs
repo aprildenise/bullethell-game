@@ -52,7 +52,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     public void ReceiveDamage(float damageReceived)
     {
         healthPoints = healthPoints - damageReceived;
-        Debug.Log(healthPoints);
+        //Debug.Log(healthPoints);
         if (!HasHealth())
         {
             OnZeroHealth();
@@ -93,20 +93,52 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
         throw new System.NotImplementedException();
     }
 
+    
+    /// <summary>
+    /// On advantage, the other Gameobject gets destroyed.
+    /// </summary>
+    /// <param name="collider"></param>
+    /// <param name="other"></param>
     public void OnAdvantage(GameObject collider, GameObject other)
     {
-        //throw new System.NotImplementedException();
+        Debug.Log("ADVANTAGE:" + name + " destroyed (" + other + ")");
+        Destroy(other);
         
     }
 
+    /// <summary>
+    /// On Disadvantage matchup, this Obstacle receives damage, if collider is a Bullet.
+    /// </summary>
+    /// <param name="collider"></param>
+    /// <param name="other"></param>
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        Destroy(other);
+        // If a Bullet was the collider, then this Obstacle receives damage.
+        try
+        {
+            Bullet bullet = collider.GetComponent<Bullet>();
+            float damage = bullet.CalculateDamage(this.gameObject);
+            ReceiveDamage(damage);
+            Debug.Log("DISADVANTAGE:" + name + " received damage:" + damage + ". TOTAL HP:" + healthPoints);
+            // Destroy the Bullet since it's no longer needed.
+            Destroy(collider);
+        }
+        catch (System.NullReferenceException)
+        {
+            // This is not a bullet.
+        }
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
-        //throw new System.NotImplementedException();
+        // If this is a Bullet, send it to OnDisadvantage.
+        Bullet bullet = collider.GetComponent<Bullet>();
+        if (bullet != null)
+        {
+            OnDisadvantage(collider, other);
+            Debug.Log("NEUTRAL GOING INTO ON DISADVANTAGE.");
+        }
+
     }
 
 
