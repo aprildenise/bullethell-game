@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc8059b96664e1418441107dcfa6a23, type: 3}
+  m_Name: Missile_BulletInfo
+  m_EditorClassIdentifier: 
+  homingRate: 0
+  accelerating: 0
+  decelerating: 0
+  timeToMax: 0
+  timeToMin: 0
+  maxSpeed: 0
+  minSpeed: 0
+  deaccelerating: 0
+  timeInDecceleration: 0
+  explodeOnContact: 1
+  explosionRadius: 10
+  explosionForce: 500
+  explosionEffect: {fileID: 0}

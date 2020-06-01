@@ -11,6 +11,7 @@ public class ShootingEnemy : Enemy
     /// <summary>
     /// Shooter that belongs to this enemy.
     /// </summary>
+    [SerializeField]
     private AutoShooter shooter;
 
     /// <summary>
@@ -19,23 +20,31 @@ public class ShootingEnemy : Enemy
     private void Start()
     {
         RunStart();
-        if (shooter == null)
-        {
-            shooter = GetComponent<AutoShooter>();
-        }
+        //if (shooter == null)
+        //{
+        //    shooter = GetComponent<AutoShooter>();
+        //}
         shooter.enabled = false;
     }
 
     /// <summary>
-    /// Check if this enemy has finished following its curve.
-    /// If it has, then turn on its shooter.
+    /// AI of the Enemy, which will only run if the Enemy has been activated.
     /// </summary>
     private void Update()
     {
-        if (followCurve.IsFinished())
+        if (!hasActivated) return;
+
+        if (followCurve != null)
+        {
+            if (followCurve.IsFinished())
+            {
+                shooter.enabled = true;
+                //shooter.BeginShooting();
+            }
+        }
+        else
         {
             shooter.enabled = true;
-            //shooter.BeginShooting();
         }
     }
 

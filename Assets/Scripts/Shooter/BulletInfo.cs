@@ -22,5 +22,20 @@ public class BulletInfo : ScriptableObject
     public bool deaccelerating;
     public float timeInDecceleration;
 
+    [Header("Exploding")]
+    public bool explodeOnContact;
+    public float explosionRadius;
+    public float explosionForce;
+    public GameObject explosionEffect;
+
+    [Header("Spawn More Bullets")]
+    public bool spawnMoreBullets;
+    public float timeToSpawn;
+    public GameObject spawnerPrefab;
+
+    [Header("Despawn Over Time")]
+    public bool despawnOverTime;
+    public float timeToDespawn;
+
 
 }

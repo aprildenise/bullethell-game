@@ -7,6 +7,7 @@ public class ShooterInfo : ScriptableObject
 {
 
     public string shooterName;
+    public float damageMultiplier;
     public GameObject prefab;
     public float speed;
     [Range(0, 360)]
@@ -22,7 +23,7 @@ public class ShooterInfo : ScriptableObject
     [Range(0, 360)]
     public float arrayGroupSpread;
 
-    public Type type;
-    public Size size;
+    public Type shooterType;
+    public Size shooterSize;
 
 }

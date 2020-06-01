@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e131cecf320d58941bd2510666c91ebd, type: 3}
+  m_Name: Player_Wide_Spread
+  m_EditorClassIdentifier: 
+  shooterName: FAN
+  damageMultiplier: 0.1
+  prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
+  speed: 50
+  aimDegree: 0
+  shotDelay: 1
+  homing: 0
+  equalArraySpread: 0
+  arrays: 3
+  arraySpread: 55
+  arrayGroups: 2
+  arrayGroupSpread: 40
+  shooterType: 1
+  shooterSize: 1

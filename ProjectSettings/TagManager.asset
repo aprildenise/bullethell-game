@@ -17,9 +17,9 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - Shootable
-  - Bullet
-  - 
+  - Enemy
+  - Player
+  - Environment
   - 
   - 
   - 

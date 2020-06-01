@@ -13,4 +13,5 @@ public interface IActivator
     /// class that implements this.
     /// </summary>
     void Activate();
+    bool HasActivated();
 }

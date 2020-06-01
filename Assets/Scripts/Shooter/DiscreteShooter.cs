@@ -5,13 +5,7 @@ using UnityEngine;
 public class DiscreteShooter : AutoShooter
 {
 
-    /// <summary>
-    /// On start, begin shooting.
-    /// </summary>
-    //private void Start()
-    //{
 
-    //}
 
     /// <summary>
     /// Checks if this shooter shot all its required sets/shots.

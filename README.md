@@ -33,3 +33,7 @@ a bullet hell game for the #100daysofgamedev challenge
 05/26,27 - Day 19 + 20, 26 hours
 * Added new graphics to the UI.
 * Implemented the weapon change.
+
+05/31 - Day 22, 30 hours
+* Implemented more weapons. Still mising sword.
+* Added post processing to the stack.

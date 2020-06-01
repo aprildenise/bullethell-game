@@ -5,14 +5,12 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     #region Variables
 
-    // Attributes for the bullets in the shooter
-    [SerializeField] BulletInfo bulletInfo;
-
-    // Attributes of this shooter
+    // Attributes of this shooter.
     [SerializeField]
-    private ShooterInfo shooterInfo;
+    protected ShooterInfo shooterInfo;
     public string shooterName;
-    public GameObject prefab;
+    public float damageMultiplier;
+    public GameObject bulletPrefab;
     public float speed;
     public float aimDegree;
     public float shotDelay;
@@ -26,18 +24,21 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     [Range(0, 360)]
     public float arrayGroupSpread;
 
-    // For class calculations
+    // For class calculations.
     protected Vector3 aimVector;
     protected Vector3 center;
     protected bool isShooting;
     protected bool inDelay;
     protected int shots;
+    //protected string originator;
 
-    // Type and size of this weapon
-    public Type type;
-    public Size size;
+    // Type and size of this weapon.
+    public Type shooterType;
+    public Size shooterSize;
     #endregion
+    
 
+    #region Shooter Functions
     /// <summary>
     /// Run the Start method. Used by children of this class.
     /// </summary>
@@ -54,7 +55,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
         if (shooterInfo != null)
         {
-            SetWithShooterInfo();
+            SetShooterInfo(shooterInfo);
         }
 
         // Logic checks
@@ -62,7 +63,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         {
             if (arrayGroups > 1)
             {
-                Debug.LogWarning("Cannot shoot arrays at equal spread with multiple array groups. equalArraySpread will be set to false instead.");
+                Debug.Log("Cannot shoot arrays at equal spread with multiple array groups. equalArraySpread will be set to false instead.");
                 equalArraySpread = false;
             }
 
@@ -71,41 +72,45 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         {
             if (arrays <= 0)
             {
-                Debug.LogWarning("There must be at least one array. arrays will be set to 1 instead.");
+                Debug.Log("There must be at least one array. arrays will be set to 1 instead.");
                 arrays = 1;
             }
             if (arrayGroups <= 0)
             {
-                Debug.LogWarning("There must be at least one array group. arrayGroups will be set to 1 instead.");
+                Debug.Log("There must be at least one array group. arrayGroups will be set to 1 instead.");
                 arrayGroups = 1;
             }
             if (arrays > 1 && arraySpread == 0)
             {
-                Debug.LogWarning("There are more than 1 array, but array spread is not defined. arrays will be set to 1 instead,");
+                Debug.Log("There are more than 1 array, but array spread is not defined. arrays will be set to 1 instead,");
                 arrays = 1;
             }
             if (arrayGroups > 1 && arrayGroupSpread == 0)
             {
-                Debug.LogWarning("There are more than 1 array group, but array group spread is not defined. arrayGroups will be set to 1 instead.");
+                Debug.Log("There are more than 1 array group, but array group spread is not defined. arrayGroups will be set to 1 instead.");
                 arrayGroups = 1;
             }
         }
 
         // Setups
-        this.enabled = false;
+        //this.enabled = false;
     }
 
 
     /// <summary>
     /// Set the aim of this shooter, in degrees.
     /// </summary>
-    /// <param name="newAim"></param>
+    /// <param name="newAim">New aim</param>
     public void SetAim(float aimDegree)
     {
         this.aimDegree = aimDegree;
         aimVector = new Vector3(Mathf.Cos(aimDegree * Mathf.Deg2Rad), 0, Mathf.Sin(aimDegree * Mathf.Deg2Rad));
     }
 
+    /// <summary>
+    /// Set the aim of this shooter, in vectors.
+    /// </summary>
+    /// <param name="newVector">New aim</param>
     public void SetAim(Vector3 aimVector)
     {
         this.aimVector = aimVector;
@@ -188,15 +193,11 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aimDegree)
     {
-        GameObject bullet = Instantiate(prefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
         Bullet b = bullet.GetComponent<Bullet>();
+        b.SetShooter(this);
 
-        // If this Shooter has a Bullet Info, add that info to the new Bullet object.
-        // Else, just set the type and the size.
-        if (bulletInfo != null) b.SetBullet(bulletInfo, type, size, this.gameObject.name, speed);
-        else b.SetBullet(type, size, this.gameObject.name, speed);
-
-        // Fire the bullet
+        // Fire the bullet.
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
         rigidBody.AddForce(aimDegree * speed, ForceMode.Impulse);
         rigidBody.MoveRotation(Quaternion.LookRotation(aimDegree));
@@ -276,10 +277,12 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         }
     }
 
-    private void SetWithShooterInfo()
+    public void SetShooterInfo(ShooterInfo shooterInfo)
     {
+        this.shooterInfo = shooterInfo;
         shooterName = shooterInfo.shooterName;
-        prefab = shooterInfo.prefab;
+        damageMultiplier = shooterInfo.damageMultiplier;
+        bulletPrefab = shooterInfo.prefab;
         speed = shooterInfo.speed;
         aimDegree = shooterInfo.aimDegree;
         shotDelay = shooterInfo.shotDelay;
@@ -289,20 +292,22 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         arraySpread = shooterInfo.arraySpread;
         arrayGroups = shooterInfo.arrayGroups;
         arrayGroupSpread = shooterInfo.arrayGroupSpread;
-        type = shooterInfo.type;
-        size = shooterInfo.size;
+        shooterType = shooterInfo.shooterType;
+        shooterSize = shooterInfo.shooterSize;
     }
+
+    #endregion
 
     #region TypeSize
 
     public Type GetGameType()
     {
-        return this.type;
+        return this.shooterType;
     }
 
     public Size GetSize()
     {
-        return this.size;
+        return this.shooterSize;
     }
 
     public void SetType(Type type)
@@ -332,11 +337,14 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
 
     #endregion
 
+    /// <summary>
+    /// For testing only.
+    /// </summary>
     private void OnValidate()
     {
         if (shooterInfo != null)
         {
-            SetWithShooterInfo();
+            SetShooterInfo(this.shooterInfo);
         }
     }
 }
