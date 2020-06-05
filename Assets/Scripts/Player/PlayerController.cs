@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour, IDestructable
     // Other components for the Player object
     private Player thisPlayer;
     private Rigidbody rigidBody;
-    public ManualShooter currentShooter;
-    public ManualShooter[] availableShooters;
+    public Weapon currentWeapon;
+    public Weapon[] availableWeapons;
     private WeaponPanel weaponPanel;
 
     /// <summary>
@@ -31,20 +31,25 @@ public class PlayerController : MonoBehaviour, IDestructable
     
     public float attackPower;
     public static bool isMoving;
-    private bool openedWeaponPanel;
+    //private bool openedWeaponPanel;
     private int heathPoints;
 
     #endregion
 
 
     #region Singleton
-    public static PlayerController instance;
+    private static PlayerController instance;
     private void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+            return;
+        }
         instance = this;
     }
 
-    public static PlayerController GetPlayerController()
+    public static PlayerController GetInstance()
     {
         return instance;
     }
@@ -54,52 +59,43 @@ public class PlayerController : MonoBehaviour, IDestructable
     /// <summary>
     /// Start is called before the first frame update. Handles setups specific to the PlayerController.
     /// </summary>
-    void Start()
+    private void Start()
     {
 
         moveSpeed = moveSpeed == 0 ? 10f : moveSpeed;
         weaponPanel = WeaponPanel.GetWeaponPanel();
 
         rigidBody = GetComponent<Rigidbody>();
-        if (rigidBody == null)
-        {
-            Debug.LogWarning("PlayerController cannot find a RigidBody2D component on the object it is attached to.", this);
-            return;
-        }
         crawlSpeed = moveSpeed / 2;
 
-        if (currentShooter == null)
-        {
-            Debug.LogWarning("PlayerController does not have a shooter component.", this);
-        }
-
         isMoving = false;
-        openedWeaponPanel = false;
+        //openedWeaponPanel = false;
     }
 
     /// <summary>
     /// Update is called once per frame. Listens for inputs from the player.
     /// </summary>
-    void Update()
+    private void Update()
     {
-
+        //Debug.Log("weapon panel:" + WeaponPanel.panelEnabled);
+        //Debug.Log("input:" + Input.GetAxisRaw("Horizontal"));
 
         // If the player is hitting space, show the weapon panel.
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (openedWeaponPanel)
+            if (WeaponPanel.panelEnabled)
             {
                 weaponPanel.DeactivateWeaponPanel();
-                openedWeaponPanel = false;
+                //openedWeaponPanel = false;
             }
             else
             {
-                openedWeaponPanel = true;
+                //openedWeaponPanel = true;
                 weaponPanel.ActivateWeaponPanel();
             }
         }
 
-        if (openedWeaponPanel) return;
+        if (WeaponPanel.panelEnabled) return;
 
         // Get axis input for movement.
         //Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -144,21 +140,21 @@ public class PlayerController : MonoBehaviour, IDestructable
     private void FixedUpdate()
     {
 
-        if (openedWeaponPanel) return;
+        if (WeaponPanel.panelEnabled) return;
 
         // Move the object based on the movement input
         rigidBody.MovePosition(rigidBody.position + moveVelocity * Time.fixedDeltaTime);
 
         // Get button input for firing.
-        if (currentShooter != null)
+        if (currentWeapon != null)
         {
             if (Input.GetMouseButton(0))
             {
-                currentShooter.AllowShooting(true);
+                currentWeapon.UseWeapon(true);
             }
             else
             {
-                currentShooter.AllowShooting(false);
+                currentWeapon.UseWeapon(false);
             }
         }
     }
@@ -177,25 +173,29 @@ public class PlayerController : MonoBehaviour, IDestructable
     public void SetCurrentShooter(Type type, Size size)
     {
         // Find the shooter in the available shooters.
-        foreach (ManualShooter s in availableShooters)
+        foreach (Weapon w in availableWeapons)
         {
             //Debug.Log("s:" + s.GetGameType() + s.GetSize());
-            if (TypeSizeController.Equals(s.GetGameType(), type) && TypeSizeController.Equals(s.GetSize(), size))
+            if (TypeSizeController.Equals(w.GetGameType(), type) && TypeSizeController.Equals(w.GetSize(), size))
             {
                 //TODO See if it's appropriate to simply deactivate
                 // Turn off current shooter and set the new one.
-                currentShooter.gameObject.SetActive(false);
-                currentShooter = s;
-                currentShooter.gameObject.SetActive(true);
+                if (currentWeapon != null) currentWeapon.gameObject.SetActive(false);
+                currentWeapon = w;
+                currentWeapon.gameObject.SetActive(true);
                 return;
             }
         }
         
     }
 
-    public string GetCurrentShooterName()
+    public string GetCurrentWeaponName()
     {
-        return currentShooter.shooterName;
+        if (currentWeapon == null)
+        {
+            return "";
+        }
+        return currentWeapon.weaponName;
     }
 
     #region Destructible

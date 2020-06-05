@@ -38,7 +38,7 @@ public abstract class AutoShooter : Shooter
         this.FixedUpdate();
     }
     
-    public void SetAutoShooterInfo(AutoShooterInfo info)
+    private void SetAutoShooterInfo(AutoShooterInfo info)
     {
         shooterInfo = info.shooterInfo;
         SetShooterInfo(shooterInfo);
@@ -60,7 +60,7 @@ public abstract class AutoShooter : Shooter
     /// </summary>
     protected void SetAimToPlayer()
     {
-        Vector3 toPlayer = PlayerController.instance.transform.position - transform.position;
+        Vector3 toPlayer = PlayerController.GetInstance().transform.position - transform.position;
         toPlayer.Normalize();
         aimVector = toPlayer;
         Vector3 to = toPlayer;
@@ -104,19 +104,19 @@ public abstract class AutoShooter : Shooter
     /// Being shooting. Note that this does not immediately shoot. The auto shooter is allowed to shoot IFF
     /// the start delay, shot delay, and set delay have all passed.
     /// </summary>
-    public void BeginShooting()
+    public override bool UseWeapon(bool canUse)
     {
         // Check the start delay.
         if (startDelayTimer.GetStatus() == Timer.Status.RUNNING)
         {
-            return;
+            return false;
         }
         // Check the set delay.
         if (shootInSets){
             Timer.Status check = setDelayTimer.GetStatus();
             if (check == Timer.Status.RUNNING)
             {
-                return;
+                return false;
             }
             else if (check == Timer.Status.FINISHED)
             {
@@ -129,7 +129,7 @@ public abstract class AutoShooter : Shooter
         Timer.Status check2 = shotDelayTimer.GetStatus();
         if (check2 == Timer.Status.RUNNING)
         {
-            return;
+            return false;
         }
         else if (check2 == Timer.Status.FINISHED)
         {
@@ -140,6 +140,7 @@ public abstract class AutoShooter : Shooter
 
         // All checks are good!
         base.Shoot();
+        return true;
 
     }
 

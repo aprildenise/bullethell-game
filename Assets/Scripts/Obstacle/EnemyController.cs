@@ -42,11 +42,12 @@ public class EnemyController : MonoBehaviour
         // Damage dealt is based on the distance from the raycast origin to the center of the hit collider.
         // The smaller the distance means the more damage dealt.
         float damage = 0f;
-        float distance = Mathf.Abs(Vector3.Distance(hit.transform.position, PlayerController.instance.transform.position)) / 100;
-        damage = PlayerController.instance.attackPower - distance;
+        PlayerController player = PlayerController.GetInstance();
+        float distance = Mathf.Abs(Vector3.Distance(hit.transform.position, player.transform.position)) / 100;
+        damage = player.attackPower - distance;
         if (damage <= 0)
         {
-            damage = PlayerController.instance.attackPower;
+            damage = player.attackPower;
         }
         return damage;
     }

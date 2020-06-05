@@ -10,7 +10,6 @@ public class Bullet : MonoBehaviour, ITypeSize
     [SerializeField]
     private BulletInfo bulletInfo;
     [Header("Homing")]
-    public float baseSpeed; // Speed as given by the Shooter this came from.
     public float homingRate;
 
     [Header("Acceleration/Decceleration")]
@@ -28,7 +27,6 @@ public class Bullet : MonoBehaviour, ITypeSize
     [Header("Exploding")]
     public bool explodeOnContact;
     public float explosionRadius;
-    //public float explosionForce;
     [SerializeField]
     private GameObject explosionEffect;
 
@@ -42,18 +40,17 @@ public class Bullet : MonoBehaviour, ITypeSize
     public float timeToDespawn;
 
 
-    // For class computations
+    // For computating speed, velocity, acceleration, and spawn.
     private Transform target;
     private Rigidbody rigidBody;
-    private float velocity;
+    public Vector3 currentVelocity;
+    private float currentSpeed;
     private float acceleration;
     private float deceleration;
     private float timer = 0;
     private Timer spawnMoreTimer;
 
-    // Type and size of the weapon that shot this bullet.
-    private Type shooterType;
-    private Size shooterSize;
+    // Origins of the bullet.
     private Vector3 origin;
     /// <summary>
     /// The Shooter that init this Bullet.
@@ -90,9 +87,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     public void SetShooter(Shooter shooter)
     {
         this.shooter = shooter;
-        this.shooterType = shooter.shooterType;
-        this.shooterSize = shooter.shooterSize;
-        this.baseSpeed = shooter.speed;
+        this.currentSpeed = shooter.speed;
     }
 
     public Shooter GetShooter()
@@ -100,11 +95,6 @@ public class Bullet : MonoBehaviour, ITypeSize
         return shooter;
     }
 
-    //public void SetLayer(int layer)
-    //{
-    //    this.layer = layer;
-    //    gameObject.layer = layer;
-    //}
 
     protected virtual void RunStart()
     {
@@ -116,7 +106,6 @@ public class Bullet : MonoBehaviour, ITypeSize
     /// </summary>
     private void Start()
     {
-        velocity = baseSpeed;
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
@@ -151,28 +140,28 @@ public class Bullet : MonoBehaviour, ITypeSize
 
         if (deaccelerating)
         {
-            if (velocity == minSpeed && timer > timeInDecceleration)
+            if (currentSpeed == minSpeed && timer > timeInDecceleration)
             {
                 deaccelerating = false;
                 accelerating = true;
                 return;
             }
-            velocity += deceleration * Time.deltaTime;
-            velocity = Mathf.Max(velocity, minSpeed);
+            currentSpeed += deceleration * Time.deltaTime;
+            currentSpeed = Mathf.Max(currentSpeed, minSpeed);
             timer += Time.deltaTime;
         }
         else
         {
             if (accelerating)
             {
-                velocity += acceleration * Time.deltaTime;
-                velocity = Mathf.Min(velocity, maxSpeed);
+                currentSpeed += acceleration * Time.deltaTime;
+                currentSpeed = Mathf.Min(currentSpeed, maxSpeed);
             }
 
             if (decelerating)
             {
-                velocity += deceleration * Time.deltaTime;
-                velocity = Mathf.Max(velocity, minSpeed);
+                currentSpeed += deceleration * Time.deltaTime;
+                currentSpeed = Mathf.Max(currentSpeed, minSpeed);
             }
         }
     }
@@ -199,8 +188,8 @@ public class Bullet : MonoBehaviour, ITypeSize
             // Apply the rotation.
             rigidBody.angularVelocity = -rotate * homingRate;
         }
-        // Continue moving the bullet (if needed)
-        rigidBody.velocity = transform.forward * velocity;
+        // Continue moving the bullet in its current trajectory.
+        //rigidBody.velocity = currentVelocity;
     }
 
 
@@ -209,7 +198,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     /// If this is an exploding bullet, the exploding action takes priority.
     /// </summary>
     /// <param name="other"></param>
-    protected void OnTriggerEnter(Collider other)
+    protected void OnColliderEnter(Collider other)
     {
 
         Debug.Log("collision between:" + other.gameObject.name + "," + gameObject.name);
@@ -277,7 +266,9 @@ public class Bullet : MonoBehaviour, ITypeSize
             //rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
         }
 
-    } 
+    }
+    
+
 
     #endregion
 
@@ -285,22 +276,22 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     public Type GetGameType()
     {
-        return this.shooterType;
+        return shooter.GetGameType();
     }
 
     public Size GetSize()
     {
-        return this.shooterSize;
+        return shooter.GetSize();
     }
 
     public void SetType(Type type)
     {
-        this.shooterType = type;
+        throw new System.NotImplementedException();
     }
 
     public void SetSize(Size size)
     {
-        this.shooterSize = size;
+        throw new System.NotImplementedException();
     }
 
     public void OnAdvantage(GameObject collider, GameObject other)
@@ -310,8 +301,36 @@ public class Bullet : MonoBehaviour, ITypeSize
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
-
         Debug.Log("BULLET NEUTRAL");
+
+        Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
+        Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
+
+        Vector3 colliderVelocity1 = collider.GetComponent<Rigidbody>().velocity;
+        Vector3 otherVelocity1 = other.GetComponent<Rigidbody>().velocity;
+
+        // TODO Temporarily 1
+        float colliderMass = 1f;
+        float otherMass = 1f;
+
+        // Calculate the elastic collision.
+        Vector3 diffVelocity = colliderVelocity1 - otherVelocity1;
+        Vector3 diffCenter = colliderCenter - otherCenter;
+        float dividend = Vector3.Dot(diffVelocity, diffCenter);
+        float divisor = Mathf.Pow(Vector3.Dot(diffCenter, diffCenter), 2);
+        Vector3 colliderVelocity2 = colliderVelocity1
+            - (2f * otherMass / (colliderMass + otherMass))
+            * (dividend / divisor) * diffCenter;
+        colliderVelocity2.y = 0f;
+
+        Debug.Log("collider velocity i:" + currentVelocity + gameObject.name);
+        Debug.Log("collider velocity f:" + colliderVelocity2 + gameObject.name);
+
+        //collider.gameObject.GetComponent<Rigidbody>().AddForce(colliderVelocity2 *-.8f, ForceMode.Impulse);
+        //currentVelocity = colliderVelocity2 * -.8f;
+        //rigidBody.velocity = colliderVelocity2 * -.8f;
+        
+        Debug.Log("collider now:" + collider.gameObject.GetComponent<Rigidbody>().velocity + gameObject.name);
 
     }
 

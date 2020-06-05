@@ -90,7 +90,7 @@ public class Enemy : Obstacle, IActivator
         hitBox = GetComponent<BoxCollider>();
         mesh = GetComponent<MeshRenderer>();
         activate = GetComponent<ActivateByProximity>();
-        activate.SetTarget(PlayerController.GetPlayerController().gameObject);
+        activate.SetTarget(PlayerController.GetInstance().gameObject) ;
 
         // If this has an ObstacleInfo, apply it's fields.
         if (obstacleInfo != null)

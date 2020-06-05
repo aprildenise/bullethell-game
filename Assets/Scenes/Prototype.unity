@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028355, g: 0.22571374, b: 0.30692255, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -155,9 +155,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6f093fcda075a439e032e0e49ee98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: 9e48ffdf32658a64cb496198ae493abd, type: 2}
-  shooterName: FAN
+  weaponName: FAN
   damageMultiplier: 0.1
+  shooterInfo: {fileID: 11400000, guid: 9e48ffdf32658a64cb496198ae493abd, type: 2}
   bulletPrefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1,
     type: 3}
   speed: 50
@@ -169,8 +169,6 @@ MonoBehaviour:
   arraySpread: 55
   arrayGroups: 2
   arrayGroupSpread: 40
-  shooterType: 1
-  shooterSize: 1
 --- !u!1 &30119710
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,22 +367,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6f093fcda075a439e032e0e49ee98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: eaa6e5f12ab38564baaa8305a0c12a61, type: 2}
-  shooterName: SINGLE
+  weaponName: SINGLE
   damageMultiplier: 0.1
+  shooterInfo: {fileID: 11400000, guid: eaa6e5f12ab38564baaa8305a0c12a61, type: 2}
   bulletPrefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1,
     type: 3}
   speed: 50
   aimDegree: 0
-  shotDelay: 2
+  shotDelay: 1
   homing: 0
   equalArraySpread: 0
-  arrays: 0
+  arrays: 1
   arraySpread: 0
-  arrayGroups: 0
+  arrayGroups: 1
   arrayGroupSpread: 0
-  shooterType: 0
-  shooterSize: 0
 --- !u!1 &52740454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1806,13 +1802,14 @@ GameObject:
   - component: {fileID: 664201343}
   - component: {fileID: 664201342}
   - component: {fileID: 664201341}
-  m_Layer: 0
-  m_Name: Cube
+  - component: {fileID: 664201345}
+  m_Layer: 10
+  m_Name: Blade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &664201341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1821,7 +1818,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664201340}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -1843,7 +1840,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 4d8c439c42aab1547b36e13d6e9d10c8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1878,13 +1875,75 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664201340}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 1.79, y: 0, z: -0}
+  m_LocalScale: {x: 0.30000013, y: 1, z: 2}
+  m_Children: []
+  m_Father: {fileID: 668093545}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &664201345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664201340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75bd53925c6840747b01cfff16dda033, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &668093544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 668093545}
+  - component: {fileID: 668093546}
+  m_Layer: 10
+  m_Name: Sword
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &668093545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668093544}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_Children:
+  - {fileID: 664201344}
+  m_Father: {fileID: 1073235851}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &668093546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668093544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2facdd017a67941850afab26d66e9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: SWORD
+  damageMultiplier: 0.5
+  info: {fileID: 11400000, guid: 5c5d07d68e09fad46b48e96422249082, type: 2}
+  swingSpeed: 2
+  swingAngle: -180
+  cooldown: 0
 --- !u!1 &694718799
 GameObject:
   m_ObjectHideFlags: 0
@@ -2291,7 +2350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &909587669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2487,9 +2546,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6f093fcda075a439e032e0e49ee98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: 2bc674b7ea0473248a6d3592de22ed47, type: 2}
-  shooterName: LASER
+  weaponName: LASER
   damageMultiplier: 0.1
+  shooterInfo: {fileID: 11400000, guid: 2bc674b7ea0473248a6d3592de22ed47, type: 2}
   bulletPrefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1,
     type: 3}
   speed: 50
@@ -2501,8 +2560,6 @@ MonoBehaviour:
   arraySpread: 0
   arrayGroups: 1
   arrayGroupSpread: 0
-  shooterType: 0
-  shooterSize: 1
 --- !u!1 &1073235846
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,13 +2593,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0e9da0241dcab4195f0ce035190545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentShooter: {fileID: 1038404725}
-  availableShooters:
+  currentWeapon: {fileID: 45859028}
+  availableWeapons:
   - {fileID: 27544092}
   - {fileID: 1038404725}
   - {fileID: 45859028}
   - {fileID: 1921566233}
   - {fileID: 2090711429}
+  - {fileID: 668093546}
   moveSpeed: 10
   attackPower: 0
 --- !u!65 &1073235848
@@ -2575,7 +2633,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 4d8c439c42aab1547b36e13d6e9d10c8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2619,6 +2677,7 @@ Transform:
   - {fileID: 45859027}
   - {fileID: 1921566234}
   - {fileID: 2090711428}
+  - {fileID: 668093545}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2997,7 +3056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1dd7b6b46cb946419f6e83376b20764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 10
+  distance: 20
 --- !u!65 &1170325398
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4457,9 +4516,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6f093fcda075a439e032e0e49ee98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: 33e0f0ffd3511e547875fc5c4745c762, type: 2}
-  shooterName: MISSILE
+  weaponName: MISSILE
   damageMultiplier: 1
+  shooterInfo: {fileID: 11400000, guid: 33e0f0ffd3511e547875fc5c4745c762, type: 2}
   bulletPrefab: {fileID: 8708065889729214692, guid: 6f7257b68c1e9614a8269bed780bcf91,
     type: 3}
   speed: 50
@@ -4471,8 +4530,6 @@ MonoBehaviour:
   arraySpread: 0
   arrayGroups: 1
   arrayGroupSpread: 0
-  shooterType: 2
-  shooterSize: 2
 --- !u!4 &1921566234
 Transform:
   m_ObjectHideFlags: 0
@@ -4903,9 +4960,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b13798dfc5b00e24b98cc0df3a186c18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: 88d9605850265b04b9fadf16245b269b, type: 2}
-  shooterName: 
+  weaponName: 
   damageMultiplier: 0.1
+  shooterInfo: {fileID: 11400000, guid: 88d9605850265b04b9fadf16245b269b, type: 2}
   bulletPrefab: {fileID: 9169452061657613119, guid: b959e22d262dc964eb9ebdfc7b8ebeac,
     type: 3}
   speed: 10
@@ -4917,8 +4974,6 @@ MonoBehaviour:
   arraySpread: 0
   arrayGroups: 1
   arrayGroupSpread: 0
-  shooterType: 0
-  shooterSize: 0
   autoShooterInfo: {fileID: 0}
   startDelay: 0
   shootInSets: 0
@@ -4971,9 +5026,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6f093fcda075a439e032e0e49ee98a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooterInfo: {fileID: 11400000, guid: 740f7ceeb60274e44bcf279f58e90d19, type: 2}
-  shooterName: FIREWORK
+  weaponName: FIREWORK
   damageMultiplier: 0.1
+  shooterInfo: {fileID: 11400000, guid: 740f7ceeb60274e44bcf279f58e90d19, type: 2}
   bulletPrefab: {fileID: 7498904299793259649, guid: 015e72d3a7361064aba6166e0447ef92,
     type: 3}
   speed: 30
@@ -4985,8 +5040,6 @@ MonoBehaviour:
   arraySpread: 0
   arrayGroups: 1
   arrayGroupSpread: 0
-  shooterType: 1
-  shooterSize: 2
 --- !u!1 &2116555871
 GameObject:
   m_ObjectHideFlags: 0

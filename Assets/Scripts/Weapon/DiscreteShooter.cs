@@ -23,7 +23,7 @@ public class DiscreteShooter : AutoShooter
             {
                 shots = 0; // Reset individual shot counter.
                 //StopShooting();
-                BeginShooting();
+                UseWeapon(true);
                 sets++; // Count this new set.
             }
         }
@@ -36,7 +36,7 @@ public class DiscreteShooter : AutoShooter
             }
             else
             {
-                BeginShooting();
+                UseWeapon(true);
             }
         }
         base.RunFixedUpdate();

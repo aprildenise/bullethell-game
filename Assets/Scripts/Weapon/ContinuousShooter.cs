@@ -24,14 +24,14 @@ public class ContinuousShooter : AutoShooter
             if (shots >= shotsPerSet)
             {
                 shots = 0; // Reset individual shot counter.
-                BeginShooting();
+                UseWeapon(true);
                 sets++; // Count this new round.
             }
         }
         else
         {
             // Just shoot!
-            BeginShooting();
+            UseWeapon(true);
         }
         base.RunFixedUpdate();
     }

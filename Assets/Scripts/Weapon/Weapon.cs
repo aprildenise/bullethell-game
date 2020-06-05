@@ -5,14 +5,22 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour, ITypeSize
 {
 
-
     public string weaponName;
     public float damageMultiplier;
-    protected Type weaponType;
-    protected Size weaponSize;
+    private Type weaponType;
+    private Size weaponSize;
+    protected bool canUseWeapon;
 
 
-    public abstract bool UseWeapon();
+    protected void SetWeaponInfo(WeaponInfo info)
+    {
+        weaponName = info.weaponName;
+        damageMultiplier = info.damageMultiplier;
+        weaponType = info.weaponType;
+        weaponSize = info.weaponSize;
+    }
+
+    public abstract bool UseWeapon(bool useWeapon);
 
     public Type GetGameType()
     {

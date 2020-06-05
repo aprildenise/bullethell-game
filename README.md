@@ -37,3 +37,12 @@ a bullet hell game for the #100daysofgamedev challenge
 05/31 - Day 22, 30 hours
 * Implemented more weapons. Still mising sword.
 * Added post processing to the stack.
+
+06/03 - Day 23, 33 hours
+* Finally implemented the Sword.
+    - ManualSword and Sword.
+* Expanded the Shooter hierarchy into a Weapon hierachy.
+* Debounced input when opening and closing the weapon wheel.
+
+06/04 - Day 24, 36 hours
+* Added bounce effect onto Bullets. Still WIP.

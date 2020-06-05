@@ -24,15 +24,15 @@ public class ManualShooter : Shooter
     /// <summary>
     /// Called in order to control the shooter.
     /// </summary>
-    /// <param name="allow">True to allow shoowing and make the shooter shoot, false elsewise. </param>
-    public void AllowShooting(bool allow)
+    public override bool UseWeapon(bool useWeapon)
     {
-        isShooting = allow;
+        canUseWeapon = useWeapon;
+        return useWeapon;
     }
 
     private void Update()
     {
-        base.SetAim(PlayerController.GetPlayerController().transform.forward);
+        base.SetAim(PlayerController.GetInstance().transform.forward);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class ManualShooter : Shooter
     /// </summary>
     private void FixedUpdate()
     {
-        if (isShooting && timer.GetStatus() == Timer.Status.FINISHED)
+        if (canUseWeapon && timer.GetStatus() == Timer.Status.FINISHED)
         {
             Shoot();
             timer.StartTimer();

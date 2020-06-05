@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Yellow Neon Bullet
+  m_Name: Yellow Neon
   m_Shader: {fileID: 4800000, guid: 2e660f05a19d2fa4e99f774c4102cb18, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

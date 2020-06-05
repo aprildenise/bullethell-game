@@ -34,7 +34,7 @@ public class TypeSizeController
             else
             {
                 originType.OnNeutral(origin, other);
-                otherType.OnNeutral(origin, other);
+                //otherType.OnNeutral(other, origin);
             }
                 
         }

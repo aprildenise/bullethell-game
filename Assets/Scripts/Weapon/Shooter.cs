@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Shooter : MonoBehaviour, ITypeSize
+public abstract class Shooter : Weapon
 {
 
     #region Variables
@@ -8,8 +8,6 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     // Attributes of this shooter.
     [SerializeField]
     protected ShooterInfo shooterInfo;
-    public string shooterName;
-    public float damageMultiplier;
     public GameObject bulletPrefab;
     public float speed;
     public float aimDegree;
@@ -27,14 +25,10 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     // For class calculations.
     protected Vector3 aimVector;
     protected Vector3 center;
-    protected bool isShooting;
+    //protected bool isShooting;
     protected bool inDelay;
     protected int shots;
-    //protected string originator;
 
-    // Type and size of this weapon.
-    public Type shooterType;
-    public Size shooterSize;
     #endregion
     
 
@@ -44,7 +38,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     /// </summary>
     protected virtual void RunStart()
     {
-        Start();
+        this.Start();
     }
 
     /// <summary>
@@ -92,8 +86,6 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
             }
         }
 
-        // Setups
-        //this.enabled = false;
     }
 
 
@@ -119,9 +111,11 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     }
 
 
+
     /// <summary>
     /// Calculate the shooting pattern based on the number of shot arrays, groups, and spread.
     /// </summary>
+    /// <returns>Always true</returns>
     protected void Shoot()
     {
         // If there is more than one shot array, then calculate the pattern.
@@ -191,16 +185,17 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     /// shot in alreadyShot.
     /// </summary>
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
-    protected void InitBullet(Vector3 aimDegree)
+    protected void InitBullet(Vector3 aim)
     {
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
         Bullet b = bullet.GetComponent<Bullet>();
         b.SetShooter(this);
+        b.currentVelocity = aim * speed ;
 
         // Fire the bullet.
         Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
-        rigidBody.AddForce(aimDegree * speed, ForceMode.Impulse);
-        rigidBody.MoveRotation(Quaternion.LookRotation(aimDegree));
+        rigidBody.AddForce(aim * speed, ForceMode.Impulse);
+        rigidBody.MoveRotation(Quaternion.LookRotation(aim));
         shots++;
     }
 
@@ -280,7 +275,7 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
     public void SetShooterInfo(ShooterInfo shooterInfo)
     {
         this.shooterInfo = shooterInfo;
-        shooterName = shooterInfo.shooterName;
+        weaponName = shooterInfo.shooterName;
         damageMultiplier = shooterInfo.damageMultiplier;
         bulletPrefab = shooterInfo.prefab;
         speed = shooterInfo.speed;
@@ -292,45 +287,25 @@ public abstract class Shooter : MonoBehaviour, ITypeSize
         arraySpread = shooterInfo.arraySpread;
         arrayGroups = shooterInfo.arrayGroups;
         arrayGroupSpread = shooterInfo.arrayGroupSpread;
-        shooterType = shooterInfo.shooterType;
-        shooterSize = shooterInfo.shooterSize;
+        SetType(shooterInfo.shooterType);
+        SetSize(shooterInfo.shooterSize);
     }
 
     #endregion
 
     #region TypeSize
 
-    public Type GetGameType()
-    {
-        return this.shooterType;
-    }
-
-    public Size GetSize()
-    {
-        return this.shooterSize;
-    }
-
-    public void SetType(Type type)
+    public override void OnAdvantage(GameObject collider, GameObject other)
     {
         throw new System.NotImplementedException();
     }
 
-    public void SetSize(Size size)
+    public override void OnDisadvantage(GameObject collider, GameObject other)
     {
         throw new System.NotImplementedException();
     }
 
-    public void OnAdvantage(GameObject collider, GameObject other)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnDisadvantage(GameObject collider, GameObject other)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnNeutral(GameObject collider, GameObject other)
+    public override void OnNeutral(GameObject collider, GameObject other)
     {
         throw new System.NotImplementedException();
     }

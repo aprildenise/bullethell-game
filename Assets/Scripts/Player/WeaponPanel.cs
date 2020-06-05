@@ -40,7 +40,7 @@ public class WeaponPanel : MonoBehaviour
     private PlayerController playerController;
 
     // For handling animations and inputs.
-    private bool panelEnabled;
+    public static bool panelEnabled;
     private CanvasGroup subButtonsEnabled;
     private Animator animator;
 
@@ -72,7 +72,7 @@ public class WeaponPanel : MonoBehaviour
     {
 
 
-        playerController = PlayerController.GetPlayerController();
+        playerController = PlayerController.GetInstance();
 
         animator = GetComponent<Animator>();
 
@@ -110,6 +110,8 @@ public class WeaponPanel : MonoBehaviour
         // Set the animator.
         animator.SetBool("panelEnabled", false);
 
+        Input.ResetInputAxes();
+
     }
 
     /// <summary>
@@ -117,6 +119,8 @@ public class WeaponPanel : MonoBehaviour
     /// </summary>
     public void ActivateWeaponPanel()
     {
+        Input.ResetInputAxes();
+
         weaponPanel.alpha = 1;
         panelEnabled = true;
 
@@ -215,7 +219,7 @@ public class WeaponPanel : MonoBehaviour
 
     private void SetText()
     {
-        currentShooterName.text = playerController.GetCurrentShooterName();
+        currentShooterName.text = playerController.GetCurrentWeaponName();
     }
 
     private void ResetSubButtonAnimator(Button[] subButtons)
