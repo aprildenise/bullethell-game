@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c4b94e8be92b9b046b037800621cc21d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +122,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletInfo: {fileID: 11400000, guid: 9df6bc4b662c18d40b8a74472a09f583, type: 2}
-  baseSpeed: 0
   homingRate: 0
   accelerating: 0
   decelerating: 0
@@ -137,7 +136,8 @@ MonoBehaviour:
   explosionEffect: {fileID: 0}
   spawnMoreBullets: 1
   timeToSpawn: 1
-  spawnerPrefab: {fileID: 8744688916638710902, guid: 566535345ade1bc4fb3181c17ea45e50,
+  spawnerPrefab: {fileID: 5336841160166699568, guid: 2494e1ab18f674c42bce0ee8cf735263,
     type: 3}
   despawnOverTime: 0
   timeToDespawn: 0
+  currentVelocity: {x: 0, y: 0, z: 0}

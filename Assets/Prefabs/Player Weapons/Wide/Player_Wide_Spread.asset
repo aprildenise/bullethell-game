@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shooterName: FAN
   damageMultiplier: 0.1
-  prefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1, type: 3}
+  prefab: {fileID: 8353687259278455949, guid: bb034c6692d6350459e63a9a1d4c99ff, type: 3}
   speed: 50
   aimDegree: 0
   shotDelay: 1

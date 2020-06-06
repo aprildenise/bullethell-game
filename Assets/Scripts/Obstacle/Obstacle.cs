@@ -119,7 +119,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
             Bullet bullet = collider.GetComponent<Bullet>();
             float damage = bullet.CalculateDamage(this.gameObject);
             ReceiveDamage(damage);
-            Debug.Log("DISADVANTAGE:" + name + " received damage:" + damage + ". TOTAL HP:" + healthPoints);
+            //Debug.Log("DISADVANTAGE:" + name + " received damage:" + damage + ". TOTAL HP:" + healthPoints);
             // Destroy the Bullet since it's no longer needed.
             Destroy(collider);
         }

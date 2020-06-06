@@ -189,7 +189,7 @@ public class Bullet : MonoBehaviour, ITypeSize
             rigidBody.angularVelocity = -rotate * homingRate;
         }
         // Continue moving the bullet in its current trajectory.
-        //rigidBody.velocity = currentVelocity;
+        rigidBody.velocity = currentVelocity;
     }
 
 
@@ -198,7 +198,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     /// If this is an exploding bullet, the exploding action takes priority.
     /// </summary>
     /// <param name="other"></param>
-    protected void OnColliderEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
 
         Debug.Log("collision between:" + other.gameObject.name + "," + gameObject.name);
@@ -297,15 +297,16 @@ public class Bullet : MonoBehaviour, ITypeSize
     public void OnAdvantage(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET ADVANTAGE");
+        Destroy(other.gameObject);
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
-        Debug.Log("BULLET NEUTRAL");
+        Debug.Log("BULLET NEUTRAL:" + this.gameObject);
 
+        // Get the initial velocities and the collider centers.
         Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
         Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
-
         Vector3 colliderVelocity1 = collider.GetComponent<Rigidbody>().velocity;
         Vector3 otherVelocity1 = other.GetComponent<Rigidbody>().velocity;
 
@@ -323,21 +324,21 @@ public class Bullet : MonoBehaviour, ITypeSize
             * (dividend / divisor) * diffCenter;
         colliderVelocity2.y = 0f;
 
-        Debug.Log("collider velocity i:" + currentVelocity + gameObject.name);
-        Debug.Log("collider velocity f:" + colliderVelocity2 + gameObject.name);
+        Debug.Log("other velocity:" + otherVelocity1);
+        Debug.Log("collider velocity:" + colliderVelocity1);
+        Debug.Log("result velocity:" + colliderVelocity2);
 
-        //collider.gameObject.GetComponent<Rigidbody>().AddForce(colliderVelocity2 *-.8f, ForceMode.Impulse);
-        //currentVelocity = colliderVelocity2 * -.8f;
-        //rigidBody.velocity = colliderVelocity2 * -.8f;
-        
-        Debug.Log("collider now:" + collider.gameObject.GetComponent<Rigidbody>().velocity + gameObject.name);
+        // Apply the new vector.
+        float multiplier = -.8f;
 
+
+        currentVelocity = colliderVelocity2 * multiplier;
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        Debug.Log("BULLET DISADVANTAGE");
-
+        Debug.Log("BULLET DISADVANTAGE:" + this.gameObject);
+        
     }
 
 
