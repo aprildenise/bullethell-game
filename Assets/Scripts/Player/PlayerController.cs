@@ -30,7 +30,8 @@ public class PlayerController : MonoBehaviour, IDestructable
     private Vector3 moveVelocity;
     
     public float attackPower;
-    public static bool isMoving;
+    public bool isMoving;
+    public Vector3 lookingAt;
     //private bool openedWeaponPanel;
     private int heathPoints;
 
@@ -127,7 +128,8 @@ public class PlayerController : MonoBehaviour, IDestructable
         if (groundPlane.Raycast(cameraRay, out rayLength))
         {
             Vector3 pointToLook = cameraRay.GetPoint(rayLength);
-            this.gameObject.transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
+            lookingAt = new Vector3(pointToLook.x, transform.position.y, pointToLook.z);
+            this.gameObject.transform.LookAt(lookingAt);
 
         }
 

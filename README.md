@@ -46,3 +46,7 @@ a bullet hell game for the #100daysofgamedev challenge
 
 06/04 - Day 24, 36 hours
 * Added bounce effect onto Bullets. Still WIP.
+
+06/07 - Day 25, 38 hours
+* Finished bounce effect onto Bullets (for now)
+* Fixed laser into a LineRenderer and a Laser/ManualLaser class.
