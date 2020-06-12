@@ -4,19 +4,28 @@ using UnityEngine;
 
 public class ManualLaser : Laser
 {
+
+    private ChargeUp charge;
+
     public override bool UseWeapon(bool useWeapon)
     {
-        if (useWeapon) EnableLaserBeam();
-        else DisableLaserBeam();
+        if (useWeapon)
+        {
+            charge.Charge();
+        }
+        else
+        {
+            charge.Cancel();
+        }
 
-        canUseWeapon = useWeapon;
-        return canUseWeapon;
+        return useWeapon;
     }
 
 
     private void Start()
     {
         base.RunStart();
+        charge = GetComponent<ChargeUp>();
     }
 
     private void FixedUpdate()

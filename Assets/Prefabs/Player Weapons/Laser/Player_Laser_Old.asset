@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e131cecf320d58941bd2510666c91ebd, type: 3}
-  m_Name: Player_Laser
+  m_Name: Player_Laser_Old
   m_EditorClassIdentifier: 
   shooterName: LASER
   damageMultiplier: 0.1

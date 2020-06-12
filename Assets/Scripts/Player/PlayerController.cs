@@ -7,12 +7,13 @@ public class PlayerController : MonoBehaviour, IDestructable
 
     #region Variables
 
-    // Other components for the Player object
-    private Player thisPlayer;
+    // Components
     private Rigidbody rigidBody;
     public Weapon currentWeapon;
     public Weapon[] availableWeapons;
     private WeaponPanel weaponPanel;
+    [SerializeField]
+    private CanvasGroup livesUI;
 
     /// <summary>
     /// Given multiplier to determine how fast the object will move.
@@ -29,11 +30,9 @@ public class PlayerController : MonoBehaviour, IDestructable
     /// </summary>
     private Vector3 moveVelocity;
     
-    public float attackPower;
-    public bool isMoving;
-    public Vector3 lookingAt;
-    //private bool openedWeaponPanel;
-    private int heathPoints;
+    private bool isMoving;
+
+    private int lives = 3;
 
     #endregion
 
@@ -64,13 +63,12 @@ public class PlayerController : MonoBehaviour, IDestructable
     {
 
         moveSpeed = moveSpeed == 0 ? 10f : moveSpeed;
-        weaponPanel = WeaponPanel.GetWeaponPanel();
-
-        rigidBody = GetComponent<Rigidbody>();
         crawlSpeed = moveSpeed / 2;
 
+        weaponPanel = WeaponPanel.GetWeaponPanel();
+        rigidBody = GetComponent<Rigidbody>();
+        
         isMoving = false;
-        //openedWeaponPanel = false;
     }
 
     /// <summary>
@@ -99,16 +97,8 @@ public class PlayerController : MonoBehaviour, IDestructable
         if (WeaponPanel.panelEnabled) return;
 
         // Get axis input for movement.
-        //Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector3 moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        if (moveInput != Vector3.zero)
-        {
-            isMoving = true;
-        }
-        else
-        {
-            isMoving = false;
-        }
+        isMoving = moveInput != Vector3.zero;
 
         // If player is hitting leftShift, calculate movement with crawlSpeed.
         if (Input.GetKey(KeyCode.LeftShift)) 
@@ -128,8 +118,7 @@ public class PlayerController : MonoBehaviour, IDestructable
         if (groundPlane.Raycast(cameraRay, out rayLength))
         {
             Vector3 pointToLook = cameraRay.GetPoint(rayLength);
-            lookingAt = new Vector3(pointToLook.x, transform.position.y, pointToLook.z);
-            this.gameObject.transform.LookAt(lookingAt);
+            this.gameObject.transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
 
         }
 
@@ -162,10 +151,12 @@ public class PlayerController : MonoBehaviour, IDestructable
     }
 
 
-    private void LoseLife()
-    {
-        Debug.Log("Player lost a life.");
-    }
+    /// <summary>
+    /// Decrease the number of lives this player has.
+    /// </summary>
+    private void LoseLife() => lives -= 1;
+ 
+
 
     /// <summary>
     /// Set the Player's current Shooter based on the given Tyoe and Size.
@@ -180,7 +171,6 @@ public class PlayerController : MonoBehaviour, IDestructable
             //Debug.Log("s:" + s.GetGameType() + s.GetSize());
             if (TypeSizeController.Equals(w.GetGameType(), type) && TypeSizeController.Equals(w.GetSize(), size))
             {
-                //TODO See if it's appropriate to simply deactivate
                 // Turn off current shooter and set the new one.
                 if (currentWeapon != null) currentWeapon.gameObject.SetActive(false);
                 currentWeapon = w;
@@ -193,10 +183,7 @@ public class PlayerController : MonoBehaviour, IDestructable
 
     public string GetCurrentWeaponName()
     {
-        if (currentWeapon == null)
-        {
-            return "";
-        }
+        if (currentWeapon == null) return "";
         return currentWeapon.weaponName;
     }
 
@@ -205,21 +192,17 @@ public class PlayerController : MonoBehaviour, IDestructable
     public void ReceiveDamage(float damageReceived)
     {
         LoseLife();
+        if (!HasHealth()) OnZeroHealth();
     }
 
     public void OnZeroHealth()
     {
-        // game over
+        Debug.Log("Game over");
     }
 
     public bool HasHealth()
     {
-        return true;
-    }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        
+        return lives <= 0;
     }
 
     #endregion

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TypeSizeController
+public static class TypeSizeController
 {
     /// <summary>
     /// Determine the interaction between two objects, based on their types/sizes.
@@ -12,36 +12,27 @@ public class TypeSizeController
     public static void Interact(GameObject origin, GameObject other)
     {
 
-        //Debug.Log("ORIGIN:" + origin + "OTHER:" + other.transform.gameObject);
+        Debug.Log("ORIGIN:" + origin.name + "OTHER:" + other.transform.gameObject.name);
 
         ITypeSize originType;
         ITypeSize otherType;
-        try
+        originType = origin.GetComponent<ITypeSize>();
+        otherType = other.GetComponent<ITypeSize>();
+        Matchup matchup = CheckMatchup(originType, otherType);
+        if (matchup == Matchup.ADVANTAGE)
         {
-            originType = origin.GetComponent<ITypeSize>();
-            otherType = other.GetComponent<ITypeSize>();
-            Matchup matchup = CheckMatchup(originType, otherType);
-            if (matchup == Matchup.ADVANTAGE)
-            {
-                originType.OnAdvantage(origin, other);
-                //otherType.OnDisadvantage(origin, other);
-            }
-            else if (matchup == Matchup.DISADVANTAGE)
-            {
-                otherType.OnDisadvantage(origin, other);
-                //otherType.OnAdvantage(origin, other);
-            }
-            else
-            {
-                originType.OnNeutral(origin, other);
-                //otherType.OnNeutral(other, origin);
-            }
-                
+            originType.OnAdvantage(origin, other);
+            otherType.OnDisadvantage(origin, other);
         }
-        catch(System.NullReferenceException)
+        else if (matchup == Matchup.DISADVANTAGE)
         {
-            // TODO These objects don't need to interact when they collide?
-            return;
+            otherType.OnDisadvantage(origin, other);
+            otherType.OnAdvantage(origin, other);
+        }
+        else
+        {
+            originType.OnNeutral(origin, other);
+            otherType.OnNeutral(other, origin);
         }
     }
 

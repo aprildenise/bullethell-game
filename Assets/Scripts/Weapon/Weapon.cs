@@ -20,6 +20,11 @@ public abstract class Weapon : MonoBehaviour, ITypeSize
         weaponSize = info.weaponSize;
     }
 
+    public Weapon GetWeapon()
+    {
+        return this;
+    }
+
     public abstract bool UseWeapon(bool useWeapon);
 
     public Type GetGameType()

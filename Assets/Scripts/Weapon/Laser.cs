@@ -18,10 +18,11 @@ public abstract class Laser : Weapon
     public float maxWidth;
     public float minWidth;
 
+    public Vector3 origin;
+    public Vector3 laserSize;
+
     private float currentLength;
     private float currentWidth;
-    //private bool hasReachedMaxLength;
-    //private bool hasReachedMaxWidth;
     private int layerMask;
 
     protected void RunStart()
@@ -34,6 +35,9 @@ public abstract class Laser : Weapon
     /// </summary>
     private void Start()
     {
+
+        SetWeaponInfo(info);
+
         //hasReachedMaxLength = false;
         //hasReachedMaxWidth = false;
         currentLength = minLength;
@@ -93,6 +97,10 @@ public abstract class Laser : Weapon
         //}
 
         //UpdateBeamSize();
+        //laserBeam.SetPosition(0, PlayerController.GetInstance().transform.position);
+        origin = transform.position;
+        laserSize = laserBeam.GetPosition(0);
+
     }
 
     /// <summary>
@@ -103,15 +111,26 @@ public abstract class Laser : Weapon
     /// <param name="hit">List of hits</param>
     protected virtual void OnRaycastHit(RaycastHit[] hits)
     {
-        // Find the closest hit.
-        RaycastHit closest = hits[0];
-        foreach (RaycastHit other in hits)
+        currentLength = Mathf.Abs(hits[0].point.x);
+        Vector3 point = transform.InverseTransformPoint(hits[0].point);
+        laserBeam.SetPosition(0, point);
+
+        // Attempt to interact with these objects.
+        // TODO decide if we should interact with all objects.
+        GameObject other = hits[0].collider.gameObject;
+        if (other.layer == this.gameObject.layer || other.layer == LayerMask.NameToLayer("Environment")) return;
+
+
+        IWeaponSpawn spawn = other.gameObject.GetComponent<IWeaponSpawn>();
+        if (spawn != null)
         {
-            if (other.distance < closest.distance) closest = other;
+            // Make sure this bullet isn't interacting with a bullet from the same Shooter.
+            if (gameObject.Equals(spawn.GetOrigin())) return;
         }
-        // Set the position of the LineRenderer to meet the hit.
-        currentLength = Mathf.Abs(hits[0].point.x - 2f); // 2f for offset.
-        laserBeam.SetPosition(0, new Vector3(currentLength, 0f, 0f));
+
+        // Everything checks out!
+        TypeSizeController.Interact(gameObject, other);
+
     }
 
     /// <summary>
@@ -122,48 +141,56 @@ public abstract class Laser : Weapon
         currentLength = maxLength;
         laserBeam.SetPosition(0, new Vector3(currentLength, 0f, 0f));
     }
-    
-    //private void UpdateBeamSize()
+
+    //protected virtual void OnEnable()
     //{
-    //    AnimationCurve curve = new AnimationCurve();
-    //    curve.AddKey(0f, currentWidth);
-    //    laserBeam.widthCurve = curve;
-    //    laserBeam.SetPosition(0, new Vector3(currentLength, 0f, 0f));
+    //    EnableLaserBeam();
+        
     //}
 
-    //private void ResetLaserBeam()
+    //protected virtual void OnDisable()
     //{
-    //    laserBeam.enabled = false;
-    //    hasReachedMaxLength = false;
-    //    hasReachedMaxWidth = false;
-    //    currentWidth = minWidth;
-    //    currentLength = minLength;
+    //    DisableLaserBeam();
+        
     //}
 
-    protected void EnableLaserBeam()
+    public void EnableLaserBeam()
     {
-        //UpdateBeamSize();
+        canUseWeapon = true;
         laserBeam.enabled = true;
     }
 
-    protected void DisableLaserBeam()
+    public void DisableLaserBeam()
     {
-        //ResetLaserBeam();
         laserBeam.enabled = false;
+        canUseWeapon = false;
     }
+
+    #region TypeSize
 
     public override void OnAdvantage(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+
+        Debug.Log("LASER ADVANTAGE");
+        // If this is a weapon spawn, destroy it.
+        if (other.GetComponent<IWeaponSpawn>() != null) Destroy(other);
+
     }
 
     public override void OnDisadvantage(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("LASER DISADVANTAGE");
     }
 
     public override void OnNeutral(GameObject collider, GameObject other)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("LASER NEUTRAL");
+    }
+
+    #endregion
+
+    private void OnValidate()
+    {
+        if (info != null) SetWeaponInfo(info);
     }
 }

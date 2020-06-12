@@ -50,3 +50,10 @@ a bullet hell game for the #100daysofgamedev challenge
 06/07 - Day 25, 38 hours
 * Finished bounce effect onto Bullets (for now)
 * Fixed laser into a LineRenderer and a Laser/ManualLaser class.
+
+06/12/2020 - Day 27, 42 hours
+* Added shaders and materials for the Laser.
+* Added a Time Controller to the Scene to slow/speed up frames.
+* Added another Post Processing effect to the scene.
+* Gave Laser a Charge Up and a charge up animation.
+* Working on giving a charge up to the sword.

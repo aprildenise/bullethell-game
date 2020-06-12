@@ -15,7 +15,7 @@ MonoBehaviour:
   shooterName: 
   damageMultiplier: 0.1
   prefab: {fileID: 9169452061657613119, guid: b959e22d262dc964eb9ebdfc7b8ebeac, type: 3}
-  speed: 10
+  speed: 50
   aimDegree: 270
   shotDelay: 1
   homing: 0

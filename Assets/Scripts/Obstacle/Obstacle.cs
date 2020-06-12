@@ -51,8 +51,8 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     public void ReceiveDamage(float damageReceived)
     {
-        healthPoints = healthPoints - damageReceived;
-        //Debug.Log(healthPoints);
+        healthPoints -= damageReceived;
+        Debug.Log(damageReceived + "," + healthPoints);
         if (!HasHealth())
         {
             OnZeroHealth();
@@ -113,20 +113,12 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     /// <param name="other"></param>
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
-        // If a Bullet was the collider, then this Obstacle receives damage.
-        try
-        {
-            Bullet bullet = collider.GetComponent<Bullet>();
-            float damage = bullet.CalculateDamage(this.gameObject);
-            ReceiveDamage(damage);
-            //Debug.Log("DISADVANTAGE:" + name + " received damage:" + damage + ". TOTAL HP:" + healthPoints);
-            // Destroy the Bullet since it's no longer needed.
-            Destroy(collider);
-        }
-        catch (System.NullReferenceException)
-        {
-            // This is not a bullet.
-        }
+
+        Debug.Log("OBSTACLE DISADVANTAGE");
+        ReceiveDamage(DamageCalculator.CalculateByDistance(collider, other.transform.position));
+
+        // Destroy weapon spawns.
+        if (other.GetComponent<IWeaponSpawn>() != null) Destroy(collider);
     }
 
     public void OnNeutral(GameObject collider, GameObject other)

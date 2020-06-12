@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour, ITypeSize
+public class Bullet : MonoBehaviour, ITypeSize, IWeaponSpawn
 {
     #region Variables
 
@@ -51,7 +51,7 @@ public class Bullet : MonoBehaviour, ITypeSize
     private Timer spawnMoreTimer;
 
     // Origins of the bullet.
-    private Vector3 origin;
+    private Vector3 originPosition;
     /// <summary>
     /// The Shooter that init this Bullet.
     /// </summary>
@@ -90,11 +90,6 @@ public class Bullet : MonoBehaviour, ITypeSize
         this.currentSpeed = shooter.speed;
     }
 
-    public Shooter GetShooter()
-    {
-        return shooter;
-    }
-
 
     protected virtual void RunStart()
     {
@@ -109,7 +104,7 @@ public class Bullet : MonoBehaviour, ITypeSize
         rigidBody = GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
-        origin = this.transform.position;
+        //origin = this.transform.position;
 
         if (spawnMoreBullets)
         {
@@ -201,7 +196,6 @@ public class Bullet : MonoBehaviour, ITypeSize
     protected void OnTriggerEnter(Collider other)
     {
 
-        Debug.Log("collision between:" + other.gameObject.name + "," + gameObject.name);
         // Check if we're colliding with someting on the same sorting layer, or in the Environment layer
         // then don't interact with it.
         if (other.gameObject.layer == this.gameObject.layer || other.gameObject.layer == LayerMask.NameToLayer("Environment")) return;
@@ -213,29 +207,17 @@ public class Bullet : MonoBehaviour, ITypeSize
             return;
         }
 
-        // Check if we're interacting with a bullet.
-        Bullet otherBullet = other.gameObject.GetComponent<Bullet>();
-        if (otherBullet != null)
+        // Attempt to interact with this by checking if its an appropriate object.
+        IWeaponSpawn otherObject = other.gameObject.GetComponent<IWeaponSpawn>();
+        if (otherObject != null)
         {
             // Make sure this bullet isn't interacting with a bullet from the same Shooter.
-            if (GetShooter().Equals(otherBullet.GetShooter())) return;
+            if (GetOrigin().Equals(otherObject.GetOrigin())) return;
         }
 
         // Everything checks out!
         TypeSizeController.Interact(this.gameObject, other.gameObject);
 
-    }
-
-
-    /// <summary> 
-    /// Calculate the damage this bullet will inflict onto a Destructable, based on
-    /// the distance from the target and this bullet's shooter.
-    /// </summary>
-    /// <returns>Damage calculated</returns>
-    public virtual float CalculateDamage(GameObject target)
-    {
-        float distance = Vector3.Distance(target.transform.position, origin);
-        return distance * shooter.damageMultiplier;
     }
 
     private void Explode()
@@ -253,8 +235,8 @@ public class Bullet : MonoBehaviour, ITypeSize
             IDestructable destructable = rb.gameObject.GetComponent<IDestructable>();
             if (destructable != null)
             {
-                destructable.ReceiveDamage(CalculateDamage(rb.gameObject));
-                continue;
+                //destructable.ReceiveDamage(CalculateDamage(rb.gameObject));
+                //continue;
             }
 
             // If this is a bullet, the bullet gets destroyed.
@@ -297,20 +279,21 @@ public class Bullet : MonoBehaviour, ITypeSize
     public void OnAdvantage(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET ADVANTAGE");
-        Destroy(other.gameObject);
+        Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET NEUTRAL:" + this.gameObject);
 
-        // Get the initial velocities and the collider centers.
+        if (other.GetComponent<Bullet>() == null) return;
+
         Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
         Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
         Vector3 colliderVelocity1 = collider.GetComponent<Rigidbody>().velocity;
         Vector3 otherVelocity1 = other.GetComponent<Rigidbody>().velocity;
 
-        // TODO Temporarily 1
         float colliderMass = 1f;
         float otherMass = 1f;
 
@@ -324,9 +307,9 @@ public class Bullet : MonoBehaviour, ITypeSize
             * (dividend / divisor) * diffCenter;
         colliderVelocity2.y = 0f;
 
-        Debug.Log("other velocity:" + otherVelocity1);
-        Debug.Log("collider velocity:" + colliderVelocity1);
-        Debug.Log("result velocity:" + colliderVelocity2);
+        //Debug.Log("other velocity:" + otherVelocity1);
+        //Debug.Log("collider velocity:" + colliderVelocity1);
+        //Debug.Log("result velocity:" + colliderVelocity2);
 
         // Apply the new vector.
         float multiplier = -.8f;
@@ -341,6 +324,15 @@ public class Bullet : MonoBehaviour, ITypeSize
         
     }
 
+
+    #endregion
+
+    #region Interactible
+
+    public GameObject GetOrigin()
+    {
+        return shooter.gameObject;
+    }
 
     #endregion
 

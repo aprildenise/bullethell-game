@@ -111,6 +111,7 @@ public class WeaponPanel : MonoBehaviour
         animator.SetBool("panelEnabled", false);
 
         Input.ResetInputAxes();
+        TimeController.GetInstance().ResetTime();
 
     }
 
@@ -120,10 +121,12 @@ public class WeaponPanel : MonoBehaviour
     public void ActivateWeaponPanel()
     {
         Input.ResetInputAxes();
+        TimeController.GetInstance().SlowTime(0.05f, 2f);
 
         weaponPanel.alpha = 1;
         panelEnabled = true;
 
+        // Set the animator.
         animator.SetInteger("buttonSelected", -1);
         animator.SetBool("panelEnabled", true) ;
     }
