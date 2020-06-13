@@ -14,6 +14,8 @@ public static class TypeSizeController
 
         Debug.Log("ORIGIN:" + origin.name + "OTHER:" + other.transform.gameObject.name);
 
+        if (origin == null || other == null) return;
+
         ITypeSize originType;
         ITypeSize otherType;
         originType = origin.GetComponent<ITypeSize>();
@@ -39,6 +41,9 @@ public static class TypeSizeController
 
     private static Matchup CheckMatchup(ITypeSize incoming, ITypeSize receiving)
     {
+
+        if (incoming == null || receiving == null) throw new System.ArgumentException("Null object");
+
         Type type1 = incoming.GetGameType();
         Type type2 = receiving.GetGameType();
         if (type1 == Type.NONE || type2 == Type.NONE)

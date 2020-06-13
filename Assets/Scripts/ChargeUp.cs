@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChargeUp : MonoBehaviour
+
+/// <summary>
+/// Template class for things that charge up before activating.
+/// </summary>
+public abstract class ChargeUp : MonoBehaviour
 {
-
-
-    public Laser chargingObject;
     public float timeToCharge;
     public float timeToCancel;
-    public float size;
-
-    [SerializeField]
-    private ParticleSystem chargeBall;
 
     protected static readonly string chargeState = "Charge";
     protected static readonly string cancelState = "Cancel";
     protected static readonly string inactivateState = "Inactive";
     protected static readonly string finishedChargeState = "FinishedCharge";
-
     public string currentState;
 
 
@@ -32,21 +28,27 @@ public class ChargeUp : MonoBehaviour
         currentState = inactivateState;
     }
 
+    protected void RunUpdate()
+    {
+        this.RunUpdate();
+    }
+
     private void Update()
     {
-        //Debug.Log(chargeBall.time);
-        if (chargeBall.time >= timeToCharge && currentState.Equals(chargeState))
+        if (GetTime() >= timeToCharge && currentState.Equals(chargeState))
         {
             FinishedCharge();
             return;
         }
 
-        if (chargeBall.time >= timeToCancel && currentState.Equals(cancelState))
+        if (GetTime() >= timeToCancel && currentState.Equals(cancelState))
         {
             Inactive();
             return;
         }
     }
+
+
 
     public void Charge()
     {
@@ -78,70 +80,10 @@ public class ChargeUp : MonoBehaviour
     }
 
 
-
-
-
-    protected virtual void OnCharge()
-    {
-        ParticleSystem.MainModule main = chargeBall.main;
-        main.duration = timeToCharge;
-        main.startLifetime = timeToCharge;
-        main.startSize = size;
-
-        AnimationCurve curve = new AnimationCurve();
-        curve.AddKey(0f, 0f);
-        curve.AddKey(1f, 1f);
-        ParticleSystem.SizeOverLifetimeModule mod = chargeBall.sizeOverLifetime;
-        mod.enabled = true;
-        mod.size = new ParticleSystem.MinMaxCurve(1f, curve);
-
-        chargeBall.gameObject.SetActive(true);
-        chargeBall.Play();
-    }
-
-    protected virtual void OnFinishedCharge()
-    {
-        ParticleSystem.SizeOverLifetimeModule mod = chargeBall.sizeOverLifetime;
-        mod.enabled = false;
-        ParticleSystem.MainModule main = chargeBall.main;
-        chargeBall.Pause();
-
-        chargingObject.EnableLaserBeam();
-
-    }
-
-    protected virtual void OnCancel()
-    {
-        chargingObject.DisableLaserBeam();
-
-        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[1];
-        int p = chargeBall.GetParticles(particles);
-
-        chargeBall.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
-        Debug.Log(chargeBall.isPlaying);
-
-        ParticleSystem.MainModule main = chargeBall.main;
-        main.duration = timeToCancel;
-        main.startLifetime = timeToCancel;
-        main.startSize = particles[0].GetCurrentSize(chargeBall);
-
-        AnimationCurve curve = new AnimationCurve();
-        curve.AddKey(0f, 1f);
-        curve.AddKey(1f, 0f);
-        ParticleSystem.SizeOverLifetimeModule mod = chargeBall.sizeOverLifetime;
-        mod.enabled = true;
-        mod.size = new ParticleSystem.MinMaxCurve(1f, curve);
-        chargeBall.Play();
-    }
-
-    protected virtual void OnInactive()
-    {
-        chargingObject.DisableLaserBeam();
-        chargeBall.Stop();
-    }
-
-
-
-
+    protected abstract void OnCharge();
+    protected abstract void OnFinishedCharge();
+    protected abstract void OnCancel();
+    protected abstract void OnInactive();
+    protected abstract float GetTime();
 
 }
