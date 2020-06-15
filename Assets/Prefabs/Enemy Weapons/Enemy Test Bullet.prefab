@@ -108,8 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletInfo: {fileID: 0}
-  homingRate: 0
   accelerating: 0
   decelerating: 0
   timeToMax: 3
@@ -118,15 +116,10 @@ MonoBehaviour:
   minSpeed: 0
   deaccelerating: 0
   timeInDecceleration: 2
-  explodeOnContact: 0
-  explosionRadius: 0
-  explosionEffect: {fileID: 0}
-  spawnMoreBullets: 0
-  timeToSpawn: 0
-  spawnerPrefab: {fileID: 0}
-  despawnOverTime: 0
-  timeToDespawn: 0
+  allowInteraction: 0
+  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
+  origin: {fileID: 0}
 --- !u!135 &135499621256969572
 SphereCollider:
   m_ObjectHideFlags: 0

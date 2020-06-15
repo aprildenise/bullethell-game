@@ -187,13 +187,13 @@ public abstract class Shooter : Weapon
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aim)
     {
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
-        Bullet b = bullet.GetComponent<Bullet>();
-        b.SetShooter(this);
-        b.currentVelocity = aim * speed ;
+        GameObject projectile = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
+        Projectile p = projectile.GetComponent<Projectile>();
+        p.origin = this;
+        p.currentVelocity = aim * speed ;
 
         // Fire the bullet.
-        Rigidbody rigidBody = bullet.GetComponent<Rigidbody>();
+        Rigidbody rigidBody = p.GetComponent<Rigidbody>();
         rigidBody.AddForce(aim * speed, ForceMode.Impulse);
         rigidBody.MoveRotation(Quaternion.LookRotation(aim));
         shots++;
@@ -315,7 +315,7 @@ public abstract class Shooter : Weapon
     /// <summary>
     /// For testing only.
     /// </summary>
-    private void OnValidate()
+    protected void OnValidate()
     {
         if (shooterInfo != null)
         {

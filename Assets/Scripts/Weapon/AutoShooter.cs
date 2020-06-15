@@ -159,11 +159,17 @@ public abstract class AutoShooter : Shooter
         }
     }
 
-    private void OnValidate()
+    new protected void OnValidate()
     {
         if (autoShooterInfo != null)
         {
             SetAutoShooterInfo(autoShooterInfo);
+            return;
+        }
+
+        if (shooterInfo != null)
+        {
+            SetShooterInfo(shooterInfo);
         }
     }
 

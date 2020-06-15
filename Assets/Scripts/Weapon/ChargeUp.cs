@@ -30,7 +30,7 @@ public abstract class ChargeUp : MonoBehaviour
 
     protected void RunUpdate()
     {
-        this.RunUpdate();
+        this.Update();
     }
 
     private void Update()

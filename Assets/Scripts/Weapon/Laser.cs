@@ -9,9 +9,12 @@ using UnityEngine;
 public abstract class Laser : Weapon
 {
 
+    // Components
     [SerializeField]
     private WeaponInfo info;
     private LineRenderer laserBeam;
+    public ChargeUp charge; // optional
+
     //public float growSpeed;
     public float maxLength;
     public float minLength;
@@ -25,11 +28,16 @@ public abstract class Laser : Weapon
     private float currentWidth;
     private int layerMask;
 
+    #region Laser Functions
+
+    /// <summary>
+    /// Run Start(). To be called by children of this class.
+    /// </summary>
     protected void RunStart()
     {
         this.Start();
     }
-    
+
     /// <summary>
     /// Setup this Laser by defining variables and components.
     /// </summary>
@@ -64,8 +72,9 @@ public abstract class Laser : Weapon
         if (!canUseWeapon) return;
 
         // Raycast to find what has hit this laser and stop the laser from growing.
-        //Vector3 direction = new Vector3(PlayerController.GetInstance().lookingAt.x, 0f, PlayerController.GetInstance().lookingAt.z);
-        RaycastHit[] hit = Physics.SphereCastAll(transform.position, maxWidth / 2, transform.right, maxLength, layerMask);
+        RaycastHit[] hit = Physics.SphereCastAll(transform.position,
+            maxWidth / 2, transform.right, maxLength, layerMask);
+
         if (hit.Length > 0)
         {
             OnRaycastHit(hit);
@@ -75,29 +84,6 @@ public abstract class Laser : Weapon
             OnRaycastMiss();
         }
 
-        //// Continue to grow the laser beam if we haven't hit anything or if we're still growing.
-        //if (!hasReachedMaxLength)
-        //{
-        //    currentLength += Time.fixedDeltaTime * growSpeed;
-
-        //    if (currentLength > maxLength)
-        //    {
-        //        currentLength = maxLength;
-        //        hasReachedMaxLength = true;
-        //    }
-        //}
-        //if (!hasReachedMaxWidth)
-        //{
-        //    currentWidth += Time.fixedDeltaTime * growSpeed;
-        //    if (currentWidth > maxWidth)
-        //    {
-        //        currentWidth = maxWidth;
-        //        hasReachedMaxWidth = true;
-        //    }
-        //}
-
-        //UpdateBeamSize();
-        //laserBeam.SetPosition(0, PlayerController.GetInstance().transform.position);
         origin = transform.position;
         laserSize = laserBeam.GetPosition(0);
 
@@ -142,29 +128,25 @@ public abstract class Laser : Weapon
         laserBeam.SetPosition(0, new Vector3(currentLength, 0f, 0f));
     }
 
-    //protected virtual void OnEnable()
-    //{
-    //    EnableLaserBeam();
-        
-    //}
-
-    //protected virtual void OnDisable()
-    //{
-    //    DisableLaserBeam();
-        
-    //}
-
+    /// <summary>
+    /// Turn on this Laser's laser beam.
+    /// </summary>
     public void EnableLaserBeam()
     {
         canUseWeapon = true;
         laserBeam.enabled = true;
     }
 
+    /// <summary>
+    /// Turn off this Laser's laser beam.
+    /// </summary>
     public void DisableLaserBeam()
     {
         laserBeam.enabled = false;
         canUseWeapon = false;
     }
+
+    #endregion
 
     #region TypeSize
 
@@ -172,19 +154,33 @@ public abstract class Laser : Weapon
     {
 
         Debug.Log("LASER ADVANTAGE");
+
         // If this is a weapon spawn, destroy it.
         if (other.GetComponent<IWeaponSpawn>() != null) Destroy(other);
+
+        if (charge != null)
+        {
+            charge.Cancel();
+            Debug.Log("LASER JAMMED");
+        }
 
     }
 
     public override void OnDisadvantage(GameObject collider, GameObject other)
     {
         Debug.Log("LASER DISADVANTAGE");
+
+        if (charge != null)
+        {
+            charge.Cancel();
+            Debug.Log("LASER JAMMED");
+        }
     }
 
     public override void OnNeutral(GameObject collider, GameObject other)
     {
         Debug.Log("LASER NEUTRAL");
+
     }
 
     #endregion

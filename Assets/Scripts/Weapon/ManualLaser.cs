@@ -5,7 +5,7 @@ using UnityEngine;
 public class ManualLaser : Laser
 {
 
-    private ChargeUp charge;
+    public GameObject laserFragmentPrefab;
 
     public override bool UseWeapon(bool useWeapon)
     {

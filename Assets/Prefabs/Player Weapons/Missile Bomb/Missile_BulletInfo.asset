@@ -25,3 +25,8 @@ MonoBehaviour:
   explosionRadius: 10
   explosionForce: 500
   explosionEffect: {fileID: 0}
+  spawnMoreBullets: 0
+  timeToSpawn: 0
+  spawnerPrefab: {fileID: 0}
+  despawnOverTime: 0
+  timeToDespawn: 0

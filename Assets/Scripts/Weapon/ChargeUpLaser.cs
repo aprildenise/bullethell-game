@@ -61,7 +61,7 @@ public class ChargeUpLaser : ChargeUp
         int p = chargeBall.GetParticles(particles);
 
         chargeBall.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        Debug.Log(chargeBall.isPlaying);
+        //Debug.Log(chargeBall.isPlaying);
 
         ParticleSystem.MainModule main = chargeBall.main;
         main.duration = timeToCancel;

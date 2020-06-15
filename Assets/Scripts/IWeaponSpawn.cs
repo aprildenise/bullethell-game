@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IWeaponSpawn
 {
 
-    GameObject GetOrigin();
+    Weapon GetOrigin();
 
 }

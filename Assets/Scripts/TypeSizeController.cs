@@ -28,7 +28,7 @@ public static class TypeSizeController
         }
         else if (matchup == Matchup.DISADVANTAGE)
         {
-            otherType.OnDisadvantage(origin, other);
+            originType.OnDisadvantage(origin, other);
             otherType.OnAdvantage(origin, other);
         }
         else
