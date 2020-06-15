@@ -41,5 +41,11 @@ public class ActivateByProximity : MonoBehaviour
         this.target = o;
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, distance);
+    }
+
 
 }

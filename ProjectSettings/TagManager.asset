@@ -4,9 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Enemy Bullet
-  - Player Bullet
-  - Enemy Shooter
   - VFX
   layers:
   - Default
