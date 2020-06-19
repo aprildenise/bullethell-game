@@ -312,14 +312,4 @@ public abstract class Shooter : Weapon
 
     #endregion
 
-    /// <summary>
-    /// For testing only.
-    /// </summary>
-    protected void OnValidate()
-    {
-        if (shooterInfo != null)
-        {
-            SetShooterInfo(this.shooterInfo);
-        }
-    }
 }

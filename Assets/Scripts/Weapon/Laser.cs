@@ -44,8 +44,6 @@ public abstract class Laser : Weapon
     private void Start()
     {
 
-        SetWeaponInfo(info);
-
         //hasReachedMaxLength = false;
         //hasReachedMaxWidth = false;
         currentLength = minLength;
@@ -83,6 +81,7 @@ public abstract class Laser : Weapon
         {
             OnRaycastMiss();
         }
+
 
         origin = transform.position;
         laserSize = laserBeam.GetPosition(0);
@@ -185,8 +184,4 @@ public abstract class Laser : Weapon
 
     #endregion
 
-    private void OnValidate()
-    {
-        if (info != null) SetWeaponInfo(info);
-    }
 }

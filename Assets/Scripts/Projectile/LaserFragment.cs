@@ -8,7 +8,7 @@ public class LaserFragment : Projectile
 
 
 
-    protected override void Setup()
+    protected override void OnStart()
     {
         allowInteraction = false;
     }

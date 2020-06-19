@@ -89,12 +89,5 @@ public abstract class Sword : Weapon
         blade.gameObject.SetActive(enabled);
     }
 
-    private void OnValidate()
-    {
-        if (info != null)
-        {
-            SetWeaponInfo(info);
-        }
-    }
 
 }

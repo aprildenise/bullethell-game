@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDestructable
+public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
 {
 
     #region Variables
@@ -203,6 +203,41 @@ public class PlayerController : MonoBehaviour, IDestructable
     public bool HasHealth()
     {
         return lives <= 0;
+    }
+
+    public Type GetGameType()
+    {
+        return currentWeapon.weaponType;
+    }
+
+    public Size GetSize()
+    {
+        return currentWeapon.weaponSize;
+    }
+
+    public void SetType(Type type)
+    {
+        return;
+    }
+
+    public void SetSize(Size size)
+    {
+        return;
+    }
+
+    public void OnAdvantage(GameObject collider, GameObject other)
+    {
+        return;
+    }
+
+    public void OnDisadvantage(GameObject collider, GameObject other)
+    {
+        return;
+    }
+
+    public void OnNeutral(GameObject collider, GameObject other)
+    {
+        return;
     }
 
     #endregion

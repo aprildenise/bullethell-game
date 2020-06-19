@@ -4713,7 +4713,7 @@ GameObject:
   - component: {fileID: 2559344952033286131}
   - component: {fileID: 2559344952033286136}
   m_Layer: 10
-  m_Name: Player
+  m_Name: Test Player
   m_TagString: Untagged
   m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4726,7 +4726,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2559344952033286137}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
@@ -4825,7 +4825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa0e9da0241dcab4195f0ce035190545, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWeapon: {fileID: 2559344953044927475}
+  currentWeapon: {fileID: 2559344953027301547}
   availableWeapons:
   - {fileID: 2559344953012394595}
   - {fileID: 2559344952434236437}
@@ -4882,6 +4882,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: SWORD
   damageMultiplier: 0.5
+  weaponType: 0
+  weaponSize: 0
   info: {fileID: 11400000, guid: 5c5d07d68e09fad46b48e96422249082, type: 2}
   swingSpeed: 2
   swingAngle: -180
@@ -9886,6 +9888,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: FAN
   damageMultiplier: 0.1
+  weaponType: 0
+  weaponSize: 0
   shooterInfo: {fileID: 11400000, guid: 9e48ffdf32658a64cb496198ae493abd, type: 2}
   bulletPrefab: {fileID: 8353687259278455949, guid: bb034c6692d6350459e63a9a1d4c99ff,
     type: 3}
@@ -14699,6 +14703,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: SINGLE
   damageMultiplier: 0.1
+  weaponType: 0
+  weaponSize: 0
   shooterInfo: {fileID: 11400000, guid: eaa6e5f12ab38564baaa8305a0c12a61, type: 2}
   bulletPrefab: {fileID: 6662922689987318932, guid: b1bcbf89157c29a44a6851a97d6fd1b1,
     type: 3}
@@ -14724,7 +14730,7 @@ GameObject:
   - component: {fileID: 2559344953044927476}
   - component: {fileID: 2559344953044927473}
   m_Layer: 10
-  m_Name: Laser(NEW)
+  m_Name: Laser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14760,6 +14766,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: LASER
   damageMultiplier: 5
+  weaponType: 0
+  weaponSize: 0
   info: {fileID: 11400000, guid: 9a1d6a9fa39aa3b459a356a1c4cd745f, type: 2}
   charge: {fileID: 2559344953044927473}
   maxLength: 50
@@ -14929,6 +14937,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: FIREWORK
   damageMultiplier: 0.1
+  weaponType: 0
+  weaponSize: 0
   shooterInfo: {fileID: 11400000, guid: 740f7ceeb60274e44bcf279f58e90d19, type: 2}
   bulletPrefab: {fileID: 7498904299793259649, guid: 015e72d3a7361064aba6166e0447ef92,
     type: 3}
@@ -14986,6 +14996,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: MISSILE
   damageMultiplier: 1
+  weaponType: 0
+  weaponSize: 0
   shooterInfo: {fileID: 11400000, guid: 33e0f0ffd3511e547875fc5c4745c762, type: 2}
   bulletPrefab: {fileID: 8708065889729214692, guid: 6f7257b68c1e9614a8269bed780bcf91,
     type: 3}

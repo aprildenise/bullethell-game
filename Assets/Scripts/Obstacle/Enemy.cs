@@ -1,22 +1,20 @@
-﻿using System.Collections;
+﻿using Pixelplacement;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Obstacle, IActivator
+public class Enemy : Obstacle, IActivator, IStateTracker
 {
 
     #region Variables
 
+
     // Components
-    /// <summary>
-    /// Controls this Enemy to follow a curve.
-    /// </summary>
-    [SerializeField]
-    protected FollowCurve followCurve; // Enemy does not have to have a FollowCurve Component.
+    private StateMachine states; // Optional
     protected ActivateByProximity activate;
 
-    // For Enemy AI.
     protected bool hasActivated;
+
 
     #endregion 
 
@@ -40,12 +38,36 @@ public class Enemy : Obstacle, IActivator
     #endregion
 
     /// <summary>
+    /// Run this object's Start() function. Called by children of this class.
+    /// </summary>
+    protected virtual void RunStart()
+    {
+        this.Start();
+    }
+
+    /// <summary>
+    /// Called on startup to define this Enemy's components.
+    /// </summary>
+    protected void Start()
+    {
+        enabled = false;
+        hasActivated = false;
+
+        // Get this Enemy's Components.
+        hitBox = GetComponent<BoxCollider>();
+        mesh = GetComponent<MeshRenderer>();
+        activate = GetComponent<ActivateByProximity>();
+        states = GetComponent<StateMachine>();
+        activate.SetTarget(PlayerController.GetInstance().gameObject);
+    }
+
+    /// <summary>
     /// Called upon activation in Activate(). Meant to be overridden by children of this class.
     /// </summary>
     protected virtual void DoSomething()
     {
         BecomePhysical();
-        FollowCurve();
+        states.Next();
     }
 
     /// <summary>
@@ -59,56 +81,8 @@ public class Enemy : Obstacle, IActivator
         mesh.enabled = true;
     }
 
-    /// <summary>
-    /// Allow this object to begin following a curve by using its FollowCurve Follow().
-    /// The object stays in place if there is no FollowCurve Component attached.
-    /// </summary>
-    protected void FollowCurve()
+    public void ReportFinishedState()
     {
-        if (followCurve != null) followCurve.Follow(true);
+        states.Next();
     }
-
-    #region Enemy Functions
-
-    /// <summary>
-    /// Run this object's Start() function. Called by children of this class.
-    /// </summary>
-    protected override void RunStart()
-    {
-        this.Start();
-    }
-
-    /// <summary>
-    /// Called on startup to define this Enemy's components.
-    /// </summary>
-    private void Start()
-    {
-        enabled = false;
-        hasActivated = false;
-        // Get this Enemy's Components.
-        //followCurve = GetComponent<FollowCurve>();
-        hitBox = GetComponent<BoxCollider>();
-        mesh = GetComponent<MeshRenderer>();
-        activate = GetComponent<ActivateByProximity>();
-        activate.SetTarget(PlayerController.GetInstance().gameObject) ;
-
-        // If this has an ObstacleInfo, apply it's fields.
-        if (obstacleInfo != null)
-        {
-            SetObstacleInfo(obstacleInfo);
-        }
-    }
-
-    /// <summary>
-    /// For testing only.
-    /// </summary>
-    private void OnValidate()
-    {
-        if (obstacleInfo!= null)
-        {
-            SetObstacleInfo(this.obstacleInfo);
-        }
-    }
-
-    #endregion
 }

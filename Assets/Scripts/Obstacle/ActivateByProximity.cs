@@ -10,7 +10,7 @@ using UnityEngine;
 public class ActivateByProximity : MonoBehaviour
 {
 
-    private GameObject target;
+    public GameObject target;
     public float distance;
 
     // Components
