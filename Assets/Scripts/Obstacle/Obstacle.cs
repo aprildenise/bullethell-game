@@ -26,7 +26,9 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     public void ReceiveDamage(float damageReceived)
     {
         healthPoints -= damageReceived;
-        Debug.Log(damageReceived + "," + healthPoints);
+        //Debug.Log(damageReceived + "," + healthPoints);
+
+        ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleDamage, transform.position);
         if (!HasHealth())
         {
             OnZeroHealth();

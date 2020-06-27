@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour, ITypeSize
 {
 
+    [Header("Weapon Properites")]
     public string weaponName;
     public float damageMultiplier;
     public Type weaponType;

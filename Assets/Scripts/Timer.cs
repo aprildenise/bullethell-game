@@ -7,6 +7,9 @@ using UnityEngine;
 /// </summary>
 public class Timer : MonoBehaviour
 {
+
+    public bool allowUnscaledDeltaTime = false;
+
     /// <summary>
     /// The duration this timer should run for.
     /// </summary>
@@ -16,6 +19,11 @@ public class Timer : MonoBehaviour
     /// Status of this timer, which can be IDLE, RUNNING, or FINISHED.
     /// </summary>
     private Status status;
+
+    /// <summary>
+    /// Have this Timer call methods of ITimerNotification. False on default.
+    /// </summary>
+    private bool useTimerNotification = false;
 
     /// <summary>
     /// Psuedo-Constructor for this Timer. Sets the duration and the status of the timer to idle, but doesn't begin the timer.
@@ -52,15 +60,31 @@ public class Timer : MonoBehaviour
     public void StartTimer()
     {
         status = Status.RUNNING;
-        Invoke("Count", duration);
+        StartCoroutine(Count());
     }
 
     /// <summary>
     /// Helper function that is called when the timer is finished counting to its duration.
     /// </summary>
-    private void Count()
+    private IEnumerator Count()
     {
+        if (allowUnscaledDeltaTime) yield return new WaitForSecondsRealtime(duration);
+        else yield return new WaitForSeconds(duration);
+
         status = Status.FINISHED;
+
+        // Call ITimerNotification methods.
+        if (!useTimerNotification) yield return 0;
+        try
+        {
+            gameObject.GetComponent<ITimerNotification>().OnTimerFinished();
+        }
+        catch (System.Exception)
+        {
+            //Debug.Log(gameObject.name + " could not find itimer notification");
+        }
+        yield return 0;
+
     }
 
 

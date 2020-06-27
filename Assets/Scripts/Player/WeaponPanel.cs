@@ -121,7 +121,7 @@ public class WeaponPanel : MonoBehaviour
     public void ActivateWeaponPanel()
     {
         Input.ResetInputAxes();
-        TimeController.GetInstance().SlowTime(0.05f, 2f);
+        TimeController.GetInstance().SlowTime(0.05f);
 
         weaponPanel.alpha = 1;
         panelEnabled = true;

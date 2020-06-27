@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 695985206591752510}
   - component: {fileID: 648245343489815066}
   - component: {fileID: 615188904654861272}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: Enemy Light Bullet
   m_TagString: Enemy Bullet
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: af241e465af93624eb0c239ef7774e0f, type: 2}
+  - {fileID: 2100000, guid: 2aa1dd2460e29ab46af519ba50ecbaf0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,6 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 17408
   accelerating: 0
   decelerating: 0
   timeToMax: 3
@@ -117,7 +120,6 @@ MonoBehaviour:
   deaccelerating: 0
   timeInDecceleration: 2
   allowInteraction: 0
-  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   origin: {fileID: 0}
 --- !u!135 &615188904654861272

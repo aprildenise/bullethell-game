@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 54133248986072962}
   - component: {fileID: 114829181439491238}
   - component: {fileID: 135499621256969572}
-  m_Layer: 9
+  m_Layer: 15
   m_Name: Enemy Mecha Bullet
   m_TagString: Enemy Bullet
   m_Icon: {fileID: 0}
@@ -108,6 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 17408
   accelerating: 0
   decelerating: 0
   timeToMax: 3
@@ -117,7 +120,6 @@ MonoBehaviour:
   deaccelerating: 0
   timeInDecceleration: 2
   allowInteraction: 0
-  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   origin: {fileID: 0}
 --- !u!135 &135499621256969572

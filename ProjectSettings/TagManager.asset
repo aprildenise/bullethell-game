@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - VFX
+  - Player Bullet
+  - Enemy Bullet
   layers:
   - Default
   - TransparentFX
@@ -20,8 +22,8 @@ TagManager:
   - Environment
   - Controllers
   - VFX
-  - 
-  - 
+  - Player Projectiles
+  - Enemy Projectiles
   - 
   - 
   - 

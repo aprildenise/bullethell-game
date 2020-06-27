@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1287309640837538958}
   - component: {fileID: 8295037703775847984}
   - component: {fileID: 853340344145573253}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Player Mecha Bullet
   m_TagString: Player Bullet
   m_Icon: {fileID: 0}
@@ -121,6 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 33280
   accelerating: 0
   decelerating: 0
   timeToMax: 0
@@ -130,6 +133,5 @@ MonoBehaviour:
   deaccelerating: 0
   timeInDecceleration: 0
   allowInteraction: 0
-  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   origin: {fileID: 0}

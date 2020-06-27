@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 58338727501262670}
   - component: {fileID: 58338727501262668}
   - component: {fileID: 58338727501262669}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58338727501262671}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7498904299793259655}
@@ -4712,7 +4712,7 @@ GameObject:
   - component: {fileID: 7498904299793259650}
   - component: {fileID: 7498904299793259651}
   - component: {fileID: 114197181717670332}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Player Firework Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4820,6 +4820,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01ad8d357d4305845a7000ec16aef5b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 33280
   accelerating: 0
   decelerating: 0
   timeToMax: 0
@@ -4829,7 +4832,6 @@ MonoBehaviour:
   deaccelerating: 0
   timeInDecceleration: 0
   allowInteraction: 0
-  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   origin: {fileID: 0}
   timeToSpawn: 1

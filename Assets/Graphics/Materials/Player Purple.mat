@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Player Purple
-  m_Shader: {fileID: 4800000, guid: e898b5b79c7d69b408ad60b8b0b48027, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2e660f05a19d2fa4e99f774c4102cb18, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -63,6 +63,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - Color_41C728A5: {r: 1.6325923, g: 0, b: 8.205924, a: 1}
     - Color_ED29DF4E: {r: 0.8347626, g: 0, b: 2, a: 0}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

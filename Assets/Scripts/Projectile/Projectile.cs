@@ -3,6 +3,9 @@
 public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
 {
 
+    [Header("Collide With Layer Masks")]
+    public LayerMask collideWith;
+
     [Header("Acceleration/Decceleration")]
     public bool accelerating;
     public bool decelerating;
@@ -18,11 +21,8 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     [Header("Optional")]
     // Optional components to have.
     public bool allowInteraction;
-    public Homing homing;
-
 
     // For computating speed, velocity, acceleration, and spawn.
-    private Transform target;
     protected Rigidbody rigidBody;
     [HideInInspector]
     public Vector3 currentVelocity;
@@ -84,7 +84,8 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
         }
 
         // Continue moving the bullet in its current trajectory.
-        rigidBody.velocity = currentVelocity;
+        rigidBody.velocity = transform.forward * currentVelocity.magnitude;
+        //rigidBody.velocity = currentVelocity;
 
         OnFixedUpdate();
 
@@ -108,14 +109,11 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     protected void OnTriggerEnter(Collider other)
     {
 
-        Debug.Log("Collision");
+        Debug.Log("On trigger collision detected");
 
-        // Check if we're colliding with someting on the same sorting layer, or in the Environment layer
-        // then don't interact with it.
-        if (other.gameObject.layer == this.gameObject.layer
-            || other.gameObject.layer == LayerMask.NameToLayer("Environment")) return;
+        // Check if we're colliding with someting we're allowed to collide with.
+        if (((1 << other.gameObject.layer) & collideWith) == 0) return;
 
-        OnTrigger();
         if (allowInteraction) Interact(other);
     }
 
@@ -166,17 +164,14 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     {
         Debug.Log("BULLET ADVANTAGE");
 
+        // If this is a destructible, attempt to inflict damage.
         IDestructable destructable = other.GetComponent<IDestructable>();
         if (destructable != null)
         {
-            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, other.transform.position, origin.damageMultiplier));
-            if (destructable.HasHealth()) ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleDamage, other.transform.position);
+            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, 
+                other.transform.position, origin.damageMultiplier));
+            OnTrigger();
             return;
-        }
-
-        if (other.GetComponent<Laser>() != null)
-        {
-            Destroy(gameObject);
         }
     }
 
@@ -184,18 +179,13 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     {
         Debug.Log("BULLET NEUTRAL:" + this.gameObject);
 
-
+        // If this is a destructible, attempt to inflict damage.
         IDestructable destructable = other.GetComponent<IDestructable>();
         if (destructable != null)
         {
-            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, other.transform.position, origin.damageMultiplier));
-            ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleDamage, other.transform.position);
-            return;
-        }
-
-        if (other.GetComponent<Bullet>() == null)
-        {
-            Destroy(this.gameObject);
+            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, 
+                other.transform.position, origin.damageMultiplier));
+            OnTrigger();
             return;
         }
 

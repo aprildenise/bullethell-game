@@ -6,27 +6,26 @@ using UnityEngine;
 /// Abstract for Lasers. Lasers require a LineRenderer for graphics and will use raycasting to find 
 /// collisions/triggers. 
 /// </summary>
+[RequireComponent(typeof(LineRenderer))]
 public abstract class Laser : Weapon
 {
-
-    // Components
-    [SerializeField]
-    private WeaponInfo info;
-    private LineRenderer laserBeam;
+    
+    [Header("Laser Properties")]
     public ChargeUp charge; // optional
-
-    //public float growSpeed;
     public float maxLength;
     public float minLength;
     public float maxWidth;
     public float minWidth;
 
-    public Vector3 origin;
-    public Vector3 laserSize;
+    [Header("Collide With")]
+    public LayerMask collideWith;
 
+    [HideInInspector] public Vector3 origin;
+    [HideInInspector] public Vector3 laserSize;
+
+    private LineRenderer laserBeam;
     private float currentLength;
     private float currentWidth;
-    private int layerMask;
 
     #region Laser Functions
 
@@ -43,14 +42,8 @@ public abstract class Laser : Weapon
     /// </summary>
     private void Start()
     {
-
-        //hasReachedMaxLength = false;
-        //hasReachedMaxWidth = false;
         currentLength = minLength;
         currentWidth = minWidth;
-        layerMask |= (1 << LayerMask.NameToLayer("Environment"));
-        layerMask |= (1 << gameObject.layer);
-        layerMask = ~(layerMask);
         laserBeam = GetComponent<LineRenderer>();
     }
 
@@ -71,7 +64,7 @@ public abstract class Laser : Weapon
 
         // Raycast to find what has hit this laser and stop the laser from growing.
         RaycastHit[] hit = Physics.SphereCastAll(transform.position,
-            maxWidth / 2, transform.right, maxLength, layerMask);
+            maxWidth / 2, transform.right, maxLength, collideWith);
 
         if (hit.Length > 0)
         {
@@ -101,10 +94,8 @@ public abstract class Laser : Weapon
         laserBeam.SetPosition(0, point);
 
         // Attempt to interact with these objects.
-        // TODO decide if we should interact with all objects.
         GameObject other = hits[0].collider.gameObject;
-        if (other.layer == this.gameObject.layer || other.layer == LayerMask.NameToLayer("Environment")) return;
-
+        if (((1 << other.gameObject.layer) & collideWith) == 0) return;
 
         IWeaponSpawn spawn = other.gameObject.GetComponent<IWeaponSpawn>();
         if (spawn != null)
@@ -114,6 +105,7 @@ public abstract class Laser : Weapon
         }
 
         // Everything checks out!
+        ParticleController.GetInstance().InitiateParticle(ParticleController.PlayerLaserCollision, other.transform.position);
         TypeSizeController.Interact(gameObject, other);
 
     }

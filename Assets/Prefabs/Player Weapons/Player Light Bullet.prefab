@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4486790172027159703}
   - component: {fileID: 6666684762450699817}
   - component: {fileID: 2616197940441798044}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: Player Light Bullet
   m_TagString: Player Bullet
   m_Icon: {fileID: 0}
@@ -121,6 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad07ead13f30c479d2d63d97484f92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 33280
   accelerating: 0
   decelerating: 0
   timeToMax: 0
@@ -130,6 +133,5 @@ MonoBehaviour:
   deaccelerating: 0
   timeInDecceleration: 0
   allowInteraction: 0
-  homing: {fileID: 0}
   currentVelocity: {x: 0, y: 0, z: 0}
   origin: {fileID: 0}

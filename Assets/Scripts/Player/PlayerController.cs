@@ -2,7 +2,10 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
+
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Timer))]
+public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerNotification
 {
 
     #region Variables
@@ -14,6 +17,7 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
     private WeaponPanel weaponPanel;
     [SerializeField]
     private CanvasGroup livesUI;
+    private SphereCollider lifeCollider;
 
     /// <summary>
     /// Given multiplier to determine how fast the object will move.
@@ -33,6 +37,12 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
     private bool isMoving;
 
     private int lives = 3;
+
+    /// <summary>
+    /// Timer component added to this object to calculate Iframes.
+    /// </summary>
+    private Timer iframeTimer;
+    private static float iframes = 3f;
 
     #endregion
 
@@ -65,8 +75,12 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
         moveSpeed = moveSpeed == 0 ? 10f : moveSpeed;
         crawlSpeed = moveSpeed / 2;
 
+        // Get and set the components.
         weaponPanel = WeaponPanel.GetWeaponPanel();
         rigidBody = GetComponent<Rigidbody>();
+        lifeCollider = GetComponent<SphereCollider>();
+        iframeTimer = gameObject.GetComponent<Timer>();
+        iframeTimer.SetTimer(iframes);
         
         isMoving = false;
     }
@@ -154,7 +168,19 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
     /// <summary>
     /// Decrease the number of lives this player has.
     /// </summary>
-    private void LoseLife() => lives -= 1;
+    private void LoseLife()
+    {
+        lives -= 1;
+        ParticleController.GetInstance().InitiateParticle(ParticleController.PlayerDeath, transform.position);
+        TimeController.GetInstance().SlowTimeForDuration(0.005f, 1.7f, 0);
+
+        // Give the player Iframes.
+        if (HasHealth())
+        {
+            lifeCollider.enabled = false;
+            iframeTimer.StartTimer();
+        }
+    }
  
 
 
@@ -202,8 +228,12 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
 
     public bool HasHealth()
     {
-        return lives <= 0;
+        return lives > 0;
     }
+
+    #endregion
+
+    #region TypeSize
 
     public Type GetGameType()
     {
@@ -241,4 +271,14 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize
     }
 
     #endregion
+
+
+    #region Timer Notification
+    public void OnTimerFinished()
+    {
+        lifeCollider.enabled = true;
+    }
+    #endregion
+
+
 }
