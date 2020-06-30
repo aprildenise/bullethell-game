@@ -12,7 +12,7 @@ public class Bomb : Projectile
 
     protected override void OnTrigger()
     {
-        ParticleController.GetInstance().InitiateParticle(ParticleController.Explosion, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.Explosion, transform.position);
 
         //Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius, ~(1 << LayerMask.NameToLayer("Environment")));
         //foreach (Collider collider in colliders)

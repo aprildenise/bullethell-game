@@ -189,6 +189,9 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
             return;
         }
 
+        // TODO Handle laser.
+        if (other.GetComponent<Laser>() != null) return;
+
         Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
         Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
         Vector3 colliderVelocity1 = collider.GetComponent<Rigidbody>().velocity;
@@ -212,12 +215,15 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
 
 
         currentVelocity = colliderVelocity2 * multiplier;
-        ParticleController.GetInstance().InitiateParticle(ParticleController.ProjectileBounce, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ProjectileBounce, transform.position);
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET DISADVANTAGE:" + this.gameObject);
+
+        // Destroy this projectile.
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
         Destroy(this.gameObject);
 
     }

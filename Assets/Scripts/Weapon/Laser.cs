@@ -105,7 +105,6 @@ public abstract class Laser : Weapon
         }
 
         // Everything checks out!
-        ParticleController.GetInstance().InitiateParticle(ParticleController.PlayerLaserCollision, other.transform.position);
         TypeSizeController.Interact(gameObject, other);
 
     }
@@ -149,9 +148,20 @@ public abstract class Laser : Weapon
         // If this is a weapon spawn, destroy it.
         if (other.GetComponent<IWeaponSpawn>() != null) Destroy(other);
 
+        // If this is a destructible, attempt to inflict damage.
+        IDestructable destructable = other.GetComponent<IDestructable>();
+        if (destructable != null)
+        {
+            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position,
+                other.transform.position, damageMultiplier));
+            ParticleController.GetInstance().InstantiateParticle(ParticleController.PlayerLaserCollision, other.transform.position, transform.position);
+            return;
+        }
+
+        // Finally, jam the laser if applicable.
         if (charge != null)
         {
-            charge.Cancel();
+            charge.Jam();
             Debug.Log("LASER JAMMED");
         }
 
@@ -161,9 +171,10 @@ public abstract class Laser : Weapon
     {
         Debug.Log("LASER DISADVANTAGE");
 
+        // Jam the laser.
         if (charge != null)
         {
-            charge.Cancel();
+            charge.Jam();
             Debug.Log("LASER JAMMED");
         }
     }
@@ -171,8 +182,8 @@ public abstract class Laser : Weapon
     public override void OnNeutral(GameObject collider, GameObject other)
     {
         Debug.Log("LASER NEUTRAL");
-
     }
+
 
     #endregion
 

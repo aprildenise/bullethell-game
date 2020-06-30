@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerN
     private void LoseLife()
     {
         lives -= 1;
-        ParticleController.GetInstance().InitiateParticle(ParticleController.PlayerDeath, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.PlayerDeath, transform.position);
         TimeController.GetInstance().SlowTimeForDuration(0.005f, 1.7f, 0);
 
         // Give the player Iframes.

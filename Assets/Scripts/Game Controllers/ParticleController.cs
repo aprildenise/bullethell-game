@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class ParticleController : MonoBehaviour
 {
@@ -60,12 +61,36 @@ public class ParticleController : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// Instantiate a specified particle by name.
+    /// </summary>
+    /// <param name="particleName"></param>
+    /// <param name="position"></param>
+    /// <param name="lookAt"></param>
+    public void InstantiateParticle(string particleName, Vector3 position, Vector3 lookAtPosition)
+    {
+        GameObject o = GetParticle(particleName);
+        Instantiate(o, position, o.transform.rotation, gameObject.transform);
+        o.transform.LookAt(new Vector3(0f, lookAtPosition.y, 0f));
+    }
 
-    public void InitiateParticle(string particleName, Vector3 position)
+    /// <summary>
+    /// Instantiate a specified particle by name.
+    /// </summary>
+    /// <param name="particleName"></param>
+    /// <param name="position"></param>
+    public void InstantiateParticle(string particleName, Vector3 position)
+    {
+        GameObject o = GetParticle(particleName);
+        Instantiate(o, position, o.transform.rotation, gameObject.transform);
+    }
+
+    private GameObject GetParticle(string particleName)
     {
         GameObject o;
-        if (dictionary.TryGetValue(particleName, out o)){
-            Instantiate(o, position, o.transform.rotation, gameObject.transform);
+        if (dictionary.TryGetValue(particleName, out o))
+        {
+            return o;
             //Debug.Log("Init particle:" + o.name);
         }
         else

@@ -28,7 +28,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
         healthPoints -= damageReceived;
         //Debug.Log(damageReceived + "," + healthPoints);
 
-        ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleDamage, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDamage, transform.position);
         if (!HasHealth())
         {
             OnZeroHealth();
@@ -42,7 +42,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     public void OnZeroHealth()
     {
-        ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleDestroy, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
         Destroy(this.gameObject);
     }
 
@@ -80,7 +80,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     {
         Debug.Log("OBSTACLE ADVANTAGE:" + name + " destroyed (" + other + ")");
         if (other != this.gameObject) Destroy(other);
-        ParticleController.GetInstance().InitiateParticle(ParticleController.ObstacleNegate, transform.position);
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleNegate, transform.position);
         
     }
 

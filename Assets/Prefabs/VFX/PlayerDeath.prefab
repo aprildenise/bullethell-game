@@ -4769,7 +4769,7 @@ GameObject:
   - component: {fileID: 4824787901399787495}
   - component: {fileID: 5507966386001498984}
   m_Layer: 0
-  m_Name: PlayerDeathEffect
+  m_Name: PlayerDeath
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -62,3 +62,7 @@ a bullet hell game for the #100daysofgamedev challenge
 * Created a new branch for prototyping
 * Added Surge and WhiteCity assets
 * Implemented basic FXs for some projectile-obstacle interactions
+
+06/30/2020 - Day 30, 51 hours
+* Added more FX to weapons, bullets, and obstacles.
+* Tiny bug fixes....everywhere!
