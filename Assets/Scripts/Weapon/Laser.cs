@@ -26,6 +26,7 @@ public abstract class Laser : Weapon
     private LineRenderer laserBeam;
     private float currentLength;
     private float currentWidth;
+    private bool isReflecting = false;
 
     #region Laser Functions
 
@@ -89,12 +90,15 @@ public abstract class Laser : Weapon
     /// <param name="hit">List of hits</param>
     protected virtual void OnRaycastHit(RaycastHit[] hits)
     {
+        // Change the points of the laser so that it only stretches until the hit.
         currentLength = Mathf.Abs(hits[0].point.x);
         Vector3 point = transform.InverseTransformPoint(hits[0].point);
         laserBeam.SetPosition(0, point);
+        laserBeam.SetPosition(1, point);
 
         // Attempt to interact with these objects.
-        GameObject other = hits[0].collider.gameObject;
+        RaycastHit firstHit = hits[0];
+        GameObject other = firstHit.collider.gameObject;
         if (((1 << other.gameObject.layer) & collideWith) == 0) return;
 
         IWeaponSpawn spawn = other.gameObject.GetComponent<IWeaponSpawn>();
@@ -107,6 +111,26 @@ public abstract class Laser : Weapon
         // Everything checks out!
         TypeSizeController.Interact(gameObject, other);
 
+
+        // On default, attempt to create a laser reflection, if allowed to.
+        if (!isReflecting)
+        {
+            laserBeam.SetPosition(2, Vector3.zero);
+        }
+        else
+        {
+            StartCoroutine(Reflect(firstHit));
+        }
+    }
+
+
+    protected IEnumerator Reflect(RaycastHit firstHit)
+    {
+        //ParticleController.GetInstance().InstantiateParticle(ParticleController.ProjectileBounce, firstHit.transform.position);
+        Vector3 pos = Vector3.Reflect(firstHit.point - this.transform.position, firstHit.normal);
+        laserBeam.SetPosition(0, Vector3.zero);
+        laserBeam.SetPosition(2, pos);
+        yield return 0; 
     }
 
     /// <summary>
@@ -114,8 +138,11 @@ public abstract class Laser : Weapon
     /// </summary>
     protected virtual void OnRaycastMiss()
     {
+        // Make the laser stretch to max length.
         currentLength = maxLength;
         laserBeam.SetPosition(0, new Vector3(currentLength, 0f, 0f));
+        laserBeam.SetPosition(1, new Vector3(currentLength, 0f, 0f));
+        laserBeam.SetPosition(2, Vector3.zero);
     }
 
     /// <summary>
@@ -145,6 +172,8 @@ public abstract class Laser : Weapon
 
         Debug.Log("LASER ADVANTAGE");
 
+        isReflecting = false;
+
         // If this is a weapon spawn, destroy it.
         if (other.GetComponent<IWeaponSpawn>() != null) Destroy(other);
 
@@ -171,6 +200,8 @@ public abstract class Laser : Weapon
     {
         Debug.Log("LASER DISADVANTAGE");
 
+        isReflecting = false;
+
         // Jam the laser.
         if (charge != null)
         {
@@ -182,6 +213,9 @@ public abstract class Laser : Weapon
     public override void OnNeutral(GameObject collider, GameObject other)
     {
         Debug.Log("LASER NEUTRAL");
+
+        isReflecting = true;
+
     }
 
 

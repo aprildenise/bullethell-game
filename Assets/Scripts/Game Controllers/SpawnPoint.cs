@@ -5,8 +5,9 @@ using UnityEngine;
 public class SpawnPoint : MonoBehaviour
 {
 
-    private new BoxCollider collider;
+    public bool despawnTriggersOnOutOfBounds;
 
+    private new BoxCollider collider;
     private static SpawnPoint instance;
     private void Awake()
     {
@@ -26,6 +27,7 @@ public class SpawnPoint : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (!despawnTriggersOnOutOfBounds) return;
         Destroy(other.gameObject);
     }
 

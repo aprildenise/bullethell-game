@@ -109,7 +109,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     protected void OnTriggerEnter(Collider other)
     {
 
-        Debug.Log("On trigger collision detected");
+        //Debug.Log("On trigger collision detected");
 
         // Check if we're colliding with someting we're allowed to collide with.
         if (((1 << other.gameObject.layer) & collideWith) == 0) return;
