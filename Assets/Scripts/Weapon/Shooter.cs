@@ -49,11 +49,6 @@ public abstract class Shooter : Weapon
     private void Start()
     {
 
-        //if (shooterInfo != null)
-        //{
-        //    SetShooterInfo(shooterInfo);
-        //}
-
         // Logic checks
         if (equalArraySpread)
         {
@@ -90,7 +85,7 @@ public abstract class Shooter : Weapon
 
         // Create an object pool for this.
         pool = ObjectPool.instance;
-        pool.AddPool(weaponName, bulletPrefab, arrays * arrayGroups * 10);
+        pool.AddPool(weaponName, bulletPrefab, arrays * arrayGroups * 100);
 
     }
 
@@ -280,25 +275,6 @@ public abstract class Shooter : Weapon
             Gizmos.DrawLine(transform.position, aimVector * 20 * speed);
         }
     }
-
-    //public void SetShooterInfo(ShooterInfo shooterInfo)
-    //{
-    //    //this.shooterInfo = shooterInfo;
-    //    weaponName = shooterInfo.shooterName;
-    //    damageMultiplier = shooterInfo.damageMultiplier;
-    //    bulletPrefab = shooterInfo.prefab;
-    //    speed = shooterInfo.speed;
-    //    aimDegree = shooterInfo.aimDegree;
-    //    shotDelay = shooterInfo.shotDelay;
-    //    homing = shooterInfo.homing;
-    //    equalArraySpread = shooterInfo.equalArraySpread;
-    //    arrays = shooterInfo.arrays;
-    //    arraySpread = shooterInfo.arraySpread;
-    //    arrayGroups = shooterInfo.arrayGroups;
-    //    arrayGroupSpread = shooterInfo.arrayGroupSpread;
-    //    SetType(shooterInfo.shooterType);
-    //    SetSize(shooterInfo.shooterSize);
-    //}
 
     #endregion
 

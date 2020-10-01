@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 public abstract class Sword : Weapon
 {
     [SerializeField]
-    private WeaponInfo info;
+    //private WeaponInfo info;
     private Blade blade;
     //public Vector3 spawnOffset;
     public float swingSpeed;

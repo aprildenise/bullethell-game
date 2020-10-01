@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPooledObject
+
+[RequireComponent(typeof(Rigidbody))]
+public abstract class Projectile : MonoBehaviour, ITypeSize, IPooledObject
 {
 
     [Header("Collide With Layer Masks")]
     public LayerMask collideWith;
 
-    [Header("Acceleration/Decceleration")]
+    [Header("Acceleration/Decceleration over time")]
     public bool accelerating;
     public bool decelerating;
     public float timeToMax;
@@ -14,13 +16,9 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
     public float maxSpeed;
     public float minSpeed;
 
-    [Header("Deccelerate, then accelerate")]
+    [Header("Deccelerate, then accelerate over time")]
     public bool deaccelerating;
     public float timeInDecceleration;
-
-    [Header("Optional")]
-    // Optional components to have.
-    public bool allowInteraction;
 
     // For computating speed, velocity, acceleration, and spawn.
     protected Rigidbody rigidBody;
@@ -41,7 +39,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
         rigidBody = this.gameObject.GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
-        allowInteraction = true;
+
         OnStart();
     }
 
@@ -113,7 +111,6 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
         // Check if we're colliding with someting we're allowed to collide with.
         if (((1 << other.gameObject.layer) & collideWith) == 0) return;
 
-        if (allowInteraction) Interact(other);
     }
 
     protected void Interact(Collider other)
@@ -149,16 +146,6 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
         return origin.GetSize();
     }
 
-    public void SetType(Type type)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void SetSize(Size size)
-    {
-        throw new System.NotImplementedException();
-    }
-
 
     public void OnAdvantage(GameObject collider, GameObject other)
     {
@@ -189,33 +176,28 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
             return;
         }
 
-        // TODO Handle laser.
-        if (other.GetComponent<Laser>() != null) return;
-
-        Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
-        Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
-        Vector3 colliderVelocity1 = collider.GetComponent<Rigidbody>().velocity;
-        Vector3 otherVelocity1 = other.GetComponent<Rigidbody>().velocity;
-
-        float colliderMass = 1f;
-        float otherMass = 1f;
-
-        // Calculate the elastic collision.
-        Vector3 diffVelocity = colliderVelocity1 - otherVelocity1;
-        Vector3 diffCenter = colliderCenter - otherCenter;
-        float dividend = Vector3.Dot(diffVelocity, diffCenter);
-        float divisor = Mathf.Pow(Vector3.Dot(diffCenter, diffCenter), 2);
-        Vector3 colliderVelocity2 = colliderVelocity1
-            - (2f * otherMass / (colliderMass + otherMass))
-            * (dividend / divisor) * diffCenter;
-        colliderVelocity2.y = 0f;
-
         // Apply the new vector.
-        float multiplier = -.8f;
+        Debug.Log("this velocity:" + currentVelocity);
+        Debug.Log("other velocity:" + other.GetComponent<Rigidbody>().velocity);
+
+        Rigidbody thisRigidbody = rigidBody;
+        Rigidbody otherRigidbody = other.GetComponent<Rigidbody>();
+        Vector3 otherVelocity = otherRigidbody.velocity;
+
+        Vector3 temp = new Vector3(currentVelocity.x, currentVelocity.y, currentVelocity.z);
+        currentVelocity = new Vector3(otherVelocity.x, otherVelocity.y, otherVelocity.z);
+        other.GetComponent<Rigidbody>().velocity = temp;
+
+        rigidBody.MoveRotation(Quaternion.LookRotation(currentVelocity));
+        otherRigidbody.MoveRotation(Quaternion.LookRotation(other.GetComponent<Rigidbody>().velocity));
+
+        Debug.Log("this velocity now:" + currentVelocity);
+        Debug.Log("other velocity now:" + other.GetComponent<Rigidbody>().velocity);
 
 
-        currentVelocity = colliderVelocity2 * multiplier;
-        ParticleController.GetInstance().InstantiateParticle(ParticleController.ProjectileBounce, transform.position);
+
+        //currentVelocity = colliderVelocity2 * multiplier;
+        //ParticleController.GetInstance().InstantiateParticle(ParticleController.ProjectileBounce, transform.position);
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
@@ -223,7 +205,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPool
         Debug.Log("BULLET DISADVANTAGE:" + this.gameObject);
 
         // Destroy this projectile.
-        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
+        //ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
         Despawn();
 
     }

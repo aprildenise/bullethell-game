@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerN
     // Components
     private Rigidbody rigidBody;
     public Weapon currentWeapon;
-    public Weapon[] availableWeapons;
-    private WeaponPanel weaponPanel;
+    //public Weapon[] availableWeapons;
+    //private WeaponPanel weaponPanel;
     [SerializeField]
     private CanvasGroup livesUI;
     private SphereCollider lifeCollider;
@@ -76,11 +76,11 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerN
         crawlSpeed = moveSpeed / 2;
 
         // Get and set the components.
-        weaponPanel = WeaponPanel.GetWeaponPanel();
+        //weaponPanel = WeaponPanel.GetWeaponPanel();
         rigidBody = GetComponent<Rigidbody>();
         lifeCollider = GetComponent<SphereCollider>();
-        iframeTimer = gameObject.GetComponent<Timer>();
-        iframeTimer.SetTimer(iframes);
+        //iframeTimer = gameObject.GetComponent<Timer>();
+        //iframeTimer.SetTimer(iframes);
         
         isMoving = false;
     }
@@ -94,19 +94,19 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerN
         //Debug.Log("input:" + Input.GetAxisRaw("Horizontal"));
 
         // If the player is hitting space, show the weapon panel.
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (WeaponPanel.panelEnabled)
-            {
-                weaponPanel.DeactivateWeaponPanel();
-                //openedWeaponPanel = false;
-            }
-            else
-            {
-                //openedWeaponPanel = true;
-                weaponPanel.ActivateWeaponPanel();
-            }
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    if (WeaponPanel.panelEnabled)
+        //    {
+        //        weaponPanel.DeactivateWeaponPanel();
+        //        //openedWeaponPanel = false;
+        //    }
+        //    else
+        //    {
+        //        //openedWeaponPanel = true;
+        //        weaponPanel.ActivateWeaponPanel();
+        //    }
+        //}
 
         if (WeaponPanel.panelEnabled) return;
 
@@ -191,19 +191,19 @@ public class PlayerController : MonoBehaviour, IDestructable, ITypeSize, ITimerN
     /// <param name="size"></param>
     public void SetCurrentShooter(Type type, Size size)
     {
-        // Find the shooter in the available shooters.
-        foreach (Weapon w in availableWeapons)
-        {
-            //Debug.Log("s:" + s.GetGameType() + s.GetSize());
-            if (TypeSizeController.Equals(w.GetGameType(), type) && TypeSizeController.Equals(w.GetSize(), size))
-            {
-                // Turn off current shooter and set the new one.
-                if (currentWeapon != null) currentWeapon.gameObject.SetActive(false);
-                currentWeapon = w;
-                currentWeapon.gameObject.SetActive(true);
-                return;
-            }
-        }
+        //// Find the shooter in the available shooters.
+        //foreach (Weapon w in availableWeapons)
+        //{
+        //    //Debug.Log("s:" + s.GetGameType() + s.GetSize());
+        //    if (TypeSizeController.Equals(w.GetGameType(), type) && TypeSizeController.Equals(w.GetSize(), size))
+        //    {
+        //        // Turn off current shooter and set the new one.
+        //        if (currentWeapon != null) currentWeapon.gameObject.SetActive(false);
+        //        currentWeapon = w;
+        //        currentWeapon.gameObject.SetActive(true);
+        //        return;
+        //    }
+        //}
         
     }
 

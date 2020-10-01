@@ -4,6 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Controller
   - VFX
   - Player Bullet
   - Enemy Bullet
@@ -17,13 +18,13 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - Enemy
   - Player
+  - Enemy
   - Environment
-  - Controllers
   - VFX
-  - Player Projectiles
-  - Enemy Projectiles
+  - 
+  - 
+  - 
   - 
   - 
   - 
