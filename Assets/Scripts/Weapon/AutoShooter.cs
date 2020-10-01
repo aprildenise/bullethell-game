@@ -3,10 +3,6 @@ using UnityEngine;
 
 public abstract class AutoShooter : Shooter
 {
-
-
-    public AutoShooterInfo autoShooterInfo;
-
     [Header("Main Enemy Shooter")]
     public float startDelay;
 
@@ -14,9 +10,6 @@ public abstract class AutoShooter : Shooter
     public bool shootInSets;
     public int shotsPerSet;
     public float setDelay;
-
-    public int requiredShots;
-    public int requiredSets;
 
     [Header("Rotation")]
     public bool constantRotation;
@@ -37,23 +30,6 @@ public abstract class AutoShooter : Shooter
     {
         this.FixedUpdate();
     }
-    
-    private void SetAutoShooterInfo(AutoShooterInfo info)
-    {
-        shooterInfo = info.shooterInfo;
-        SetShooterInfo(shooterInfo);
-        autoShooterInfo = info;
-        startDelay = info.startDelay;
-        shootInSets = info.shootInSets;
-        shotsPerSet = info.shotsPerSet;
-        setDelay = info.setDelay;
-        requiredShots = info.requiredShots;
-        requiredSets = info.requiredSets;
-        constantRotation = info.constantRotation;
-        spinAngle = info.spinAngle;
-        sets = info.sets;
-
-}
 
     /// <summary>
     /// If this shot is homing, set the aim automatically to the player.
@@ -74,7 +50,7 @@ public abstract class AutoShooter : Shooter
     /// <summary>
     /// Set the aim, timers, and run start of the parent through RunStart().
     /// </summary>
-    protected void Awake()
+    protected void Start()
     {
         RunStart();
         SetAim(aimDegree);
@@ -121,7 +97,6 @@ public abstract class AutoShooter : Shooter
             else if (check == Timer.Status.FINISHED)
             {
                 // Restart this timer.
-                Debug.Log("Passed delay");
                 setDelayTimer.StartTimer();
             }
         }
@@ -159,18 +134,5 @@ public abstract class AutoShooter : Shooter
         }
     }
 
-    new protected void OnValidate()
-    {
-        if (autoShooterInfo != null)
-        {
-            SetAutoShooterInfo(autoShooterInfo);
-            return;
-        }
-
-        if (shooterInfo != null)
-        {
-            SetShooterInfo(shooterInfo);
-        }
-    }
 
 }

@@ -61,12 +61,39 @@ public class ChargeUpLaser : ChargeUp
         int p = chargeBall.GetParticles(particles);
 
         chargeBall.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        //Debug.Log(chargeBall.isPlaying);
 
         ParticleSystem.MainModule main = chargeBall.main;
         main.duration = timeToCancel;
         main.startLifetime = timeToCancel;
         main.startSize = particles[0].GetCurrentSize(chargeBall);
+
+
+        AnimationCurve curve = new AnimationCurve();
+        curve.AddKey(0f, 1f);
+        curve.AddKey(1f, 0f);
+        ParticleSystem.SizeOverLifetimeModule mod = chargeBall.sizeOverLifetime;
+        mod.enabled = true;
+        mod.size = new ParticleSystem.MinMaxCurve(1f, curve);
+        chargeBall.Play(false);
+    }
+
+    protected override void OnJam()
+    {
+        chargingObject.DisableLaserBeam();
+
+        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[1];
+        int p = chargeBall.GetParticles(particles);
+
+        chargeBall.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        ParticleSystem.MainModule main = chargeBall.main;
+        main.duration = timeToCancel;
+        main.startLifetime = timeToCancel;
+        main.startSize = particles[0].GetCurrentSize(chargeBall);
+
+        // Have the color change.
+        ParticleSystem.ColorOverLifetimeModule color = chargeBall.colorOverLifetime;
+        color.enabled = true;
 
         AnimationCurve curve = new AnimationCurve();
         curve.AddKey(0f, 1f);
@@ -81,6 +108,10 @@ public class ChargeUpLaser : ChargeUp
     {
         chargingObject.DisableLaserBeam();
         chargeBall.Stop(true);
+
+        // Reset the color.
+        ParticleSystem.ColorOverLifetimeModule color = chargeBall.colorOverLifetime;
+        color.enabled = false;
     }
 
     protected override float GetTime()

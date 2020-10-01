@@ -4,19 +4,15 @@ using UnityEngine;
 
 public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 {
-
-
     #region Variables
 
-    // Obstacle fields.
-    [SerializeField]
-    protected ObstacleInfo obstacleInfo;
-    protected string obstacleName;
+    // Obstacle fields
+    public string obstacleName;
     /// <summary>
     /// Health Points of this object.
     /// </summary>
-    protected float healthPoints;
-    protected Type obstacleType;
+    public float healthPoints;
+    public Type obstacleType;
 
     // Components for this obstacle.
     protected BoxCollider hitBox;
@@ -24,35 +20,15 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     #endregion
 
-    /// <summary>
-    /// Calls Start() of the parent. To be used by the child.
-    /// </summary>
-    protected abstract void RunStart();
-
-    /// <summary>
-    /// Set the ObstacleInfo along with all the fields within it.
-    /// </summary>
-    /// <param name="obstacleInfo">ObstacleInfo to set.</param>
-    protected void SetObstacleInfo(ObstacleInfo obstacleInfo)
-    {
-        this.obstacleInfo = obstacleInfo;
-        obstacleName = obstacleInfo.obstableName;
-        healthPoints = obstacleInfo.healthPoints;
-        obstacleType = obstacleInfo.obstacleType;
-    }
-
 
     #region Destructible
-
-    //public void OnTriggerEnter(Collider other)
-    //{
-    //    Debug.Log("trigger test");
-    //}
 
     public void ReceiveDamage(float damageReceived)
     {
         healthPoints -= damageReceived;
-        Debug.Log(damageReceived + "," + healthPoints);
+        //Debug.Log(damageReceived + "," + healthPoints);
+
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDamage, transform.position);
         if (!HasHealth())
         {
             OnZeroHealth();
@@ -66,6 +42,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
 
     public void OnZeroHealth()
     {
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
         Destroy(this.gameObject);
     }
 
@@ -101,8 +78,9 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     /// <param name="other"></param>
     public void OnAdvantage(GameObject collider, GameObject other)
     {
-        Debug.Log("ADVANTAGE:" + name + " destroyed (" + other + ")");
-        Destroy(other);
+        Debug.Log("OBSTACLE ADVANTAGE:" + name + " destroyed (" + other + ")");
+        if (other != this.gameObject) other.GetComponent<IPooledObject>().Despawn();
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleNegate, transform.position);
         
     }
 
@@ -115,16 +93,19 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     {
 
         Debug.Log("OBSTACLE DISADVANTAGE");
-        ReceiveDamage(DamageCalculator.CalculateByDistance(collider, other.transform.position));
+        //ReceiveDamage(DamageCalculator.CalculateByDistance(collider, other.transform.position));
 
         // Destroy weapon spawns.
-        if (other.GetComponent<IWeaponSpawn>() != null) Destroy(collider);
+        if (other.GetComponent<IWeaponSpawn>() != null) other.GetComponent<IPooledObject>().Despawn();
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
     {
+
+        Debug.Log("OBSTACLE NEUTRAL");
+
         // If this is a Bullet, send it to OnDisadvantage.
-        Bullet bullet = collider.GetComponent<Bullet>();
+        Bullet bullet = other.GetComponent<Bullet>();
         if (bullet != null)
         {
             OnDisadvantage(collider, other);

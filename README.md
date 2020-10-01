@@ -57,3 +57,12 @@ a bullet hell game for the #100daysofgamedev challenge
 * Added another Post Processing effect to the scene.
 * Gave Laser a Charge Up and a charge up animation.
 * Working on giving a charge up to the sword.
+
+06/18/2020 - Day 29, 48 hours
+* Created a new branch for prototyping
+* Added Surge and WhiteCity assets
+* Implemented basic FXs for some projectile-obstacle interactions
+
+06/30/2020 - Day 30, 51 hours
+* Added more FX to weapons, bullets, and obstacles.
+* Tiny bug fixes....everywhere!

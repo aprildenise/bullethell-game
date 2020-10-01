@@ -5,7 +5,9 @@ using UnityEngine;
 public class DiscreteShooter : AutoShooter
 {
 
-
+    [Header("Shooting requirements")]
+    public int requiredShots;
+    public int requiredSets;
 
     /// <summary>
     /// Checks if this shooter shot all its required sets/shots.
@@ -17,6 +19,7 @@ public class DiscreteShooter : AutoShooter
             // Check if this shot the required number of sets.
             if (sets >= requiredSets)
             {
+                Destroy(this); // Done. Destroy this Shooter.
                 return;
             }
             else if (shots >= shotsPerSet)
@@ -32,6 +35,7 @@ public class DiscreteShooter : AutoShooter
             // Check if this shot the required number of shots.
             if (shots >= requiredShots)
             {
+                Destroy(this); // Done. Destroy this Shooter.
                 return;
             }
             else

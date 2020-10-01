@@ -10,7 +10,7 @@ using UnityEngine;
 public class ActivateByProximity : MonoBehaviour
 {
 
-    private GameObject target;
+    public GameObject target;
     public float distance;
 
     // Components
@@ -39,6 +39,12 @@ public class ActivateByProximity : MonoBehaviour
     public void SetTarget(GameObject o)
     {
         this.target = o;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, distance);
     }
 
 

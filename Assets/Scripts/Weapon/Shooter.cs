@@ -7,7 +7,7 @@ public abstract class Shooter : Weapon
 
     // Attributes of this shooter.
     [SerializeField]
-    protected ShooterInfo shooterInfo;
+    //protected ShooterInfo shooterInfo;
     public GameObject bulletPrefab;
     public float speed;
     public float aimDegree;
@@ -29,6 +29,8 @@ public abstract class Shooter : Weapon
     protected bool inDelay;
     protected int shots;
 
+    private ObjectPool pool;
+
     #endregion
     
 
@@ -47,10 +49,10 @@ public abstract class Shooter : Weapon
     private void Start()
     {
 
-        if (shooterInfo != null)
-        {
-            SetShooterInfo(shooterInfo);
-        }
+        //if (shooterInfo != null)
+        //{
+        //    SetShooterInfo(shooterInfo);
+        //}
 
         // Logic checks
         if (equalArraySpread)
@@ -85,6 +87,10 @@ public abstract class Shooter : Weapon
                 arrayGroups = 1;
             }
         }
+
+        // Create an object pool for this.
+        pool = ObjectPool.instance;
+        pool.AddPool(weaponName, bulletPrefab, arrays * arrayGroups * 10);
 
     }
 
@@ -187,15 +193,18 @@ public abstract class Shooter : Weapon
     /// <param name="aim">Vector3 representing the direction the bullet will be shot towards.</param>
     protected void InitBullet(Vector3 aim)
     {
-        GameObject projectile = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
+        //GameObject projectile = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
+
+        GameObject projectile = ObjectPool.instance.SpawnFromPool(weaponName, transform.position);
+
         Projectile p = projectile.GetComponent<Projectile>();
         p.origin = this;
         p.currentVelocity = aim * speed ;
 
-        // Fire the bullet.
+        // Change the aim of the bullet.
         Rigidbody rigidBody = p.GetComponent<Rigidbody>();
-        rigidBody.AddForce(aim * speed, ForceMode.Impulse);
-        rigidBody.MoveRotation(Quaternion.LookRotation(aim));
+        //projectile.transform.rotation = Quaternion.identity; // Reset rotation.
+        rigidBody.MoveRotation(Quaternion.LookRotation(aim)); // Apply rotation.
         shots++;
     }
 
@@ -272,24 +281,24 @@ public abstract class Shooter : Weapon
         }
     }
 
-    public void SetShooterInfo(ShooterInfo shooterInfo)
-    {
-        this.shooterInfo = shooterInfo;
-        weaponName = shooterInfo.shooterName;
-        damageMultiplier = shooterInfo.damageMultiplier;
-        bulletPrefab = shooterInfo.prefab;
-        speed = shooterInfo.speed;
-        aimDegree = shooterInfo.aimDegree;
-        shotDelay = shooterInfo.shotDelay;
-        homing = shooterInfo.homing;
-        equalArraySpread = shooterInfo.equalArraySpread;
-        arrays = shooterInfo.arrays;
-        arraySpread = shooterInfo.arraySpread;
-        arrayGroups = shooterInfo.arrayGroups;
-        arrayGroupSpread = shooterInfo.arrayGroupSpread;
-        SetType(shooterInfo.shooterType);
-        SetSize(shooterInfo.shooterSize);
-    }
+    //public void SetShooterInfo(ShooterInfo shooterInfo)
+    //{
+    //    //this.shooterInfo = shooterInfo;
+    //    weaponName = shooterInfo.shooterName;
+    //    damageMultiplier = shooterInfo.damageMultiplier;
+    //    bulletPrefab = shooterInfo.prefab;
+    //    speed = shooterInfo.speed;
+    //    aimDegree = shooterInfo.aimDegree;
+    //    shotDelay = shooterInfo.shotDelay;
+    //    homing = shooterInfo.homing;
+    //    equalArraySpread = shooterInfo.equalArraySpread;
+    //    arrays = shooterInfo.arrays;
+    //    arraySpread = shooterInfo.arraySpread;
+    //    arrayGroups = shooterInfo.arrayGroups;
+    //    arrayGroupSpread = shooterInfo.arrayGroupSpread;
+    //    SetType(shooterInfo.shooterType);
+    //    SetSize(shooterInfo.shooterSize);
+    //}
 
     #endregion
 
@@ -312,14 +321,4 @@ public abstract class Shooter : Weapon
 
     #endregion
 
-    /// <summary>
-    /// For testing only.
-    /// </summary>
-    protected void OnValidate()
-    {
-        if (shooterInfo != null)
-        {
-            SetShooterInfo(this.shooterInfo);
-        }
-    }
 }

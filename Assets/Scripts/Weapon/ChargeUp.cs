@@ -72,6 +72,13 @@ public abstract class ChargeUp : MonoBehaviour
         OnCancel();
     }
 
+    public void Jam()
+    {
+        if (currentState.Equals(inactivateState) || currentState.Equals(cancelState)) return;
+        currentState = cancelState;
+        OnJam();
+    }
+
     public void Inactive()
     {
         if (currentState.Equals(inactivateState)) return;
@@ -83,6 +90,7 @@ public abstract class ChargeUp : MonoBehaviour
     protected abstract void OnCharge();
     protected abstract void OnFinishedCharge();
     protected abstract void OnCancel();
+    protected abstract void OnJam();
     protected abstract void OnInactive();
     protected abstract float GetTime();
 

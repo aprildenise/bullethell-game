@@ -3,19 +3,6 @@
 public class ContinuousShooter : AutoShooter
 {
 
-    //private void Start()
-    //{
-    //    base.RunStart();
-    //    if (shootInSets)
-    //    {
-    //        InvokeRepeating("CalculateShot", setDelay, shotDelay);
-    //    }
-    //    else
-    //    {
-    //        InvokeRepeating("CalculateShot", 0f, shotDelay);
-    //    }
-    //}
-
     private void FixedUpdate()
     {
         // Shoot in a set

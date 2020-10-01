@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
+public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPooledObject
 {
+
+    [Header("Collide With Layer Masks")]
+    public LayerMask collideWith;
 
     [Header("Acceleration/Decceleration")]
     public bool accelerating;
@@ -20,12 +21,9 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     [Header("Optional")]
     // Optional components to have.
     public bool allowInteraction;
-    public Homing homing;
-
 
     // For computating speed, velocity, acceleration, and spawn.
-    private Transform target;
-    private Rigidbody rigidBody;
+    protected Rigidbody rigidBody;
     [HideInInspector]
     public Vector3 currentVelocity;
     private float currentSpeed;
@@ -43,10 +41,11 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
         rigidBody = this.gameObject.GetComponent<Rigidbody>();
         acceleration = maxSpeed / timeToMax;
         deceleration = -1 * (maxSpeed / timeToMin);
-        Setup();
+        allowInteraction = true;
+        OnStart();
     }
 
-    protected virtual void Setup()
+    protected virtual void OnStart()
     {
         return;
     }
@@ -54,7 +53,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     /// <summary>
     /// Find the acceleration and deceleration of the bullet.
     /// </summary>
-    protected void Update()
+    protected void FixedUpdate()
     {
 
         if (deaccelerating)
@@ -83,10 +82,23 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
                 currentSpeed = Mathf.Max(currentSpeed, minSpeed);
             }
         }
+
+        // Continue moving the bullet in its current trajectory.
+        rigidBody.velocity = transform.forward * currentVelocity.magnitude;
+
+        OnFixedUpdate();
+
     }
 
+    protected virtual void OnFixedUpdate()
+    {
+        return;
+    }
 
-    protected abstract void OnTrigger();
+    protected virtual void OnTrigger()
+    {
+        return;
+    }
 
     /// <summary>
     /// Interact with what was just collided based on Typing and Size rules.
@@ -96,12 +108,11 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     protected void OnTriggerEnter(Collider other)
     {
 
-        // Check if we're colliding with someting on the same sorting layer, or in the Environment layer
-        // then don't interact with it.
-        if (other.gameObject.layer == this.gameObject.layer 
-            || other.gameObject.layer == LayerMask.NameToLayer("Environment")) return;
+        //Debug.Log("On trigger collision detected");
 
-        OnTrigger();
+        // Check if we're colliding with someting we're allowed to collide with.
+        if (((1 << other.gameObject.layer) & collideWith) == 0) return;
+
         if (allowInteraction) Interact(other);
     }
 
@@ -127,6 +138,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     }
 
 
+    #region TypeSize
     public Type GetGameType()
     {
         return origin.GetGameType();
@@ -147,12 +159,19 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
         throw new System.NotImplementedException();
     }
 
+
     public void OnAdvantage(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET ADVANTAGE");
-        if (other.GetComponent<Laser>() != null)
+
+        // If this is a destructible, attempt to inflict damage.
+        IDestructable destructable = other.GetComponent<IDestructable>();
+        if (destructable != null)
         {
-            Destroy(gameObject);
+            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, 
+                other.transform.position, origin.damageMultiplier));
+            OnTrigger();
+            return;
         }
     }
 
@@ -160,7 +179,18 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     {
         Debug.Log("BULLET NEUTRAL:" + this.gameObject);
 
-        if (other.GetComponent<Bullet>() == null) return;
+        // If this is a destructible, attempt to inflict damage.
+        IDestructable destructable = other.GetComponent<IDestructable>();
+        if (destructable != null)
+        {
+            destructable.ReceiveDamage(DamageCalculator.CalculateByDistance(collider.transform.position, 
+                other.transform.position, origin.damageMultiplier));
+            OnTrigger();
+            return;
+        }
+
+        // TODO Handle laser.
+        if (other.GetComponent<Laser>() != null) return;
 
         Vector3 colliderCenter = collider.GetComponent<Collider>().bounds.center;
         Vector3 otherCenter = other.GetComponent<Collider>().bounds.center;
@@ -185,16 +215,28 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
 
 
         currentVelocity = colliderVelocity2 * multiplier;
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ProjectileBounce, transform.position);
     }
 
     public void OnDisadvantage(GameObject collider, GameObject other)
     {
         Debug.Log("BULLET DISADVANTAGE:" + this.gameObject);
 
+        // Destroy this projectile.
+        ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
+        Despawn();
+
     }
+
+    #endregion
 
     public Weapon GetOrigin()
     {
         return origin;
+    }
+
+    public void Despawn()
+    {
+        gameObject.SetActive(false);
     }
 }
