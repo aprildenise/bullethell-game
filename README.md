@@ -66,3 +66,9 @@ a bullet hell game for the #100daysofgamedev challenge
 06/30/2020 - Day 30, 51 hours
 * Added more FX to weapons, bullets, and obstacles.
 * Tiny bug fixes....everywhere!
+
+10/01/2020 - Day 31, 53 hours - Happy Devtober!
+* Upgrated to Unity 2019.
+* Refined the scope and the typing system.
+* Trashed many scripts into the Unused folder.
+
