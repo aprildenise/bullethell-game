@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
+public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn, IPooledObject
 {
 
     [Header("Collide With Layer Masks")]
@@ -85,7 +85,6 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
 
         // Continue moving the bullet in its current trajectory.
         rigidBody.velocity = transform.forward * currentVelocity.magnitude;
-        //rigidBody.velocity = currentVelocity;
 
         OnFixedUpdate();
 
@@ -139,6 +138,7 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
     }
 
 
+    #region TypeSize
     public Type GetGameType()
     {
         return origin.GetGameType();
@@ -224,12 +224,19 @@ public abstract class Projectile : MonoBehaviour, ITypeSize, IWeaponSpawn
 
         // Destroy this projectile.
         ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleDestroy, transform.position);
-        Destroy(this.gameObject);
+        Despawn();
 
     }
+
+    #endregion
 
     public Weapon GetOrigin()
     {
         return origin;
+    }
+
+    public void Despawn()
+    {
+        gameObject.SetActive(false);
     }
 }

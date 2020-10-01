@@ -195,18 +195,16 @@ public abstract class Shooter : Weapon
     {
         //GameObject projectile = Instantiate(bulletPrefab, transform.position, Quaternion.identity, SpawnPoint.GetSpawnPoint().transform);
 
-        GameObject projectile = ObjectPool.instance.SpawnFromPool(weaponName, transform.position, Quaternion.identity);
+        GameObject projectile = ObjectPool.instance.SpawnFromPool(weaponName, transform.position);
 
         Projectile p = projectile.GetComponent<Projectile>();
         p.origin = this;
         p.currentVelocity = aim * speed ;
 
-        Debug.Log(p.currentVelocity);
-
-        // Fire the bullet.
+        // Change the aim of the bullet.
         Rigidbody rigidBody = p.GetComponent<Rigidbody>();
-        rigidBody.AddForce(aim * speed, ForceMode.Impulse);
-        rigidBody.MoveRotation(Quaternion.LookRotation(aim));
+        //projectile.transform.rotation = Quaternion.identity; // Reset rotation.
+        rigidBody.MoveRotation(Quaternion.LookRotation(aim)); // Apply rotation.
         shots++;
     }
 

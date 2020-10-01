@@ -4800,11 +4800,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ca2a0aa684e57741ad7c8904b7061e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: 
+  weaponName: FIREWORK SPAWNER
   damageMultiplier: 3
   weaponType: 1
   weaponSize: 2
-  shooterInfo: {fileID: 0}
   bulletPrefab: {fileID: 3282654326047738865, guid: ffa13222ba8a6ba49b177755c2005a0c,
     type: 3}
   speed: 40
@@ -4814,7 +4813,7 @@ MonoBehaviour:
   equalArraySpread: 1
   arrays: 12
   arraySpread: 0
-  arrayGroups: 0
+  arrayGroups: 1
   arrayGroupSpread: 0
   startDelay: 0
   shootInSets: 0

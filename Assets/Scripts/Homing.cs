@@ -6,19 +6,21 @@ public class Homing : MonoBehaviour
 
     public GameObject target;
     public float homingRate;
-    [HideInInspector] public Vector3 currentVelocity;
+    public float moveSpeed;
 
-    private Rigidbody rigidBody;
+    //[HideInInspector] public Vector3 currentVelocity;
+
+    public Rigidbody bodyThatHomes;
 
 
     protected void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        bodyThatHomes = GetComponent<Rigidbody>();
+        bodyThatHomes.velocity = Vector3.forward;
     }
 
 
     ///// <summary>
-    ///// If homing, alter the path of this bullet.
     ///// Also, apply the acceleration and deceleration found in Update.
     ///// </summary>
     protected void FixedUpdate()
@@ -29,15 +31,15 @@ public class Homing : MonoBehaviour
         // Take the cross product of the normalized vectors for the direction to the target,
         // and the direction the bullet is currently moving in, in order to find the rotation needed
         // to reach the target.
-        Vector3 targetDirection = target.transform.position - rigidBody.position;
+        Vector3 targetDirection = target.transform.position - bodyThatHomes.position;
         targetDirection.Normalize();
-        Vector3 currentDirection = rigidBody.velocity;
+        Vector3 currentDirection = bodyThatHomes.velocity;
         currentDirection.Normalize();
         Vector3 rotate = Vector3.Cross(targetDirection, currentDirection);
 
         // Apply the rotation.
-        rigidBody.angularVelocity = -rotate * homingRate;
-        //currentVelocity = rigidBody.angularVelocity;
+        bodyThatHomes.angularVelocity = -rotate * homingRate;
+        //currentVelocity = bodyThatHomes.angularVelocity;
 
     }
 

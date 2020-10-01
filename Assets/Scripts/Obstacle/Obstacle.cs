@@ -79,7 +79,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
     public void OnAdvantage(GameObject collider, GameObject other)
     {
         Debug.Log("OBSTACLE ADVANTAGE:" + name + " destroyed (" + other + ")");
-        if (other != this.gameObject) Destroy(other);
+        if (other != this.gameObject) other.GetComponent<IPooledObject>().Despawn();
         ParticleController.GetInstance().InstantiateParticle(ParticleController.ObstacleNegate, transform.position);
         
     }
@@ -96,7 +96,7 @@ public abstract class Obstacle : MonoBehaviour, IDestructable, ITypeSize
         //ReceiveDamage(DamageCalculator.CalculateByDistance(collider, other.transform.position));
 
         // Destroy weapon spawns.
-        if (other.GetComponent<IWeaponSpawn>() != null) Destroy(other);
+        if (other.GetComponent<IWeaponSpawn>() != null) other.GetComponent<IPooledObject>().Despawn();
     }
 
     public void OnNeutral(GameObject collider, GameObject other)
